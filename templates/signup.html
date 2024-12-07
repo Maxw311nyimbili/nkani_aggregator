@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            max-width: 400px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #28a745;
+            color: white;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+
+        .btn-custom {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-custom:hover {
+            background-color: #218838;
+        }
+
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        <div class="card p-4">
+            <div class="card-header">
+                <h1>Sign Up</h1>
+            </div>
+            <form method="POST" action="/signup" onsubmit="return validateForm()">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                    <small class="form-text text-muted">Password should be at least 6 characters.</small>
+                </div>
+                <div id="error-message" class="text-danger mb-3" style="display: none;">
+                    <small>There was an error with your sign up. Please check your details and try again.</small>
+                </div>
+                <button type="submit" class="btn btn-custom w-100">Sign Up</button>
+            </form>
+            <p class="text-center mt-3">Already have an account? <a href="templates/login.html">Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Simple client-side validation
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Check if password is at least 6 characters
+            if (password.length < 6) {
+                errorMessage.style.display = 'block';
+                return false; // Prevent form submission
+            }
+
+            // Add more validation logic if necessary (e.g., regex for email format)
+
+            // Clear error message if validation passes
+            errorMessage.style.display = 'none';
+            return true;
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
