@@ -50,6 +50,9 @@ def verify_password(stored_password: str, password: str, salt: bytes) -> bool:
     return stored_password == hashed_attempt
 
 
+
+
+
 @app.route('/')
 def index():
     # Fetch news articles and comments
@@ -90,7 +93,7 @@ def signup():
         app.logger.debug(f"Salt: {base64.urlsafe_b64encode(salt).decode()}")
 
         # Default role_id for new users (1 for regular users)
-        role_id = 1
+        role_id = 11
 
         # Insert into the database
         conn = get_db_connection()
@@ -271,6 +274,17 @@ def fetch_news():
         app.logger.error(f"Unexpected error: {str(e)}")
         return jsonify({'error': 'An unexpected error occurred, please try again later'}), 500
 
+def create_default_roles():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM user_roles WHERE role_name IN ('admin', 'regular_user')")
+    result = cursor.fetchone()
+    if result[0] == 0:
+        cursor.execute("INSERT INTO user_roles (role_name) VALUES ('admin')")
+        cursor.execute("INSERT INTO user_roles (role_name) VALUES ('regular_user')")
+        conn.commit()
+        conn.close()
 
+create_default_roles()
 if __name__ == '__main__':
     app.run(debug=True)
