@@ -72,7 +72,7 @@ def create_app(config_class='config.Config'):
                                username=session.get('username'))
 
 
-    @app.route('/signup', methods=['GET', 'POST'])
+    @app.route('templates/signup', methods=['GET', 'POST'])
     def signup():
         if request.method == 'POST':
             # Fetch input from the form
@@ -109,7 +109,7 @@ def create_app(config_class='config.Config'):
         return render_template('signup.html')
 
 
-    @app.route('/login', methods=['GET', 'POST'])
+    @app.route('templates/login', methods=['GET', 'POST'])
     def login():
         if request.method == 'POST':
             username = request.form['username']
