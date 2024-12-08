@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Nkani | Login</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="./static/images/favicon-32x32.png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parsley.js/2.9.2/parsley.min.js" defer></script>
+    <!-- Initializing parsely Manually -->
+    <script>
+        $(document).ready(function () {
+            $('#loginForm').parsley();
+        }); 
+    </script>
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: #282654;
         }
 
         .card {
@@ -18,41 +27,96 @@
         }
 
         .card-header {
-            background-color: #007bff;
+            background-color: #E95C40;
             color: white;
             border-radius: 10px 10px 0 0;
             text-align: center;
         }
 
         .btn-custom {
-            background-color: #007bff;
+            background-color: #6F246D;
             color: white;
         }
 
         .btn-custom:hover {
-            background-color: #0056b3;
+            background-color: #832b80;
+            color: white;
         }
 
         .form-control:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+            border-color: #E95C40;
+            box-shadow: 0 0 0 0.2rem rgba(230, 117, 42, 0.25);
+        }
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .logo img{
+            width: 100px;
+            margin-left: 15vw;
+        }
+        ul.parsley-errors-list {
+            color: red; 
+            list-style: none; 
+            margin: 5px 0; 
+            padding: 0; 
+            font-size:16px;
+        }
+
+        input.parsley-error {
+            border-color: red; 
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); 
         }
     </style>
 </head>
 <body>
+     <!-- Navbar -->
+     <nav class="navbar navbar-expand-lg navbar-white bg-white shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand logo" href="{{ url_for('index') }}"><img src="../static/images/logo.png" alt=""></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.get('logged_in') %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Welcome, {{ session.get('username') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('signup') }}">Sign Up</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
     <div class="container my-5">
         <div class="card p-4">
             <div class="card-header">
                 <h1>Login</h1>
             </div>
-            <form method="POST" action="/login">
+            <form method="POST" action="/login" data-parsley-validate>
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" required autofocus>
+                    <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    <input type="password" class="form-control" id="password" name="password" required data-parsley-minlength="8"
+                    data-parsley-required-message="Password is required"
+                    data-parsley-minlength-message="Password must be at least 8 characters long" autocomplete="off">
                 </div>
 
                 <!-- Error message section (conditionally displayed) -->
@@ -62,7 +126,7 @@
 
                 <button type="submit" class="btn btn-custom w-100">Login</button>
             </form>
-            <p class="text-center mt-3">Don't have an account? <a href="templates/signup.html">Sign Up</a></p>
+            <p class="text-center mt-3">Don't have an account? <a href="{{url_for('signup') }}">Sign Up</a></p>
         </div>
     </div>
 
