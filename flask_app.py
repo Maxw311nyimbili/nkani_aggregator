@@ -26,7 +26,7 @@ app.secret_key = '7a0f4c08c43d5bb2f4a97d5756fc5e26e31c457db080'
 
 def get_db_connection():
     return mysql.connector.connect(
-        host='localhost',
+        host='169.239.251.102:3341',
         user='maxwell.nyimbili',
         password='L3gendary1864',
         database='webtech_fall2024_maxwell_nyimbili'
