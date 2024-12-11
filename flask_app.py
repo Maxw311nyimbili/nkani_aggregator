@@ -26,10 +26,11 @@ app.secret_key = '7a0f4c08c43d5bb2f4a97d5756fc5e26e31c457db080'
 
 def get_db_connection():
     return mysql.connector.connect(
-        host='169.239.251.102:3341',
-        user='maxwell.nyimbili',
-        password='L3gendary1864',
-        database='webtech_fall2024_maxwell_nyimbili'
+        host='169.239.251.102',  # IP address or hostname of the remote server
+        port=3341,  # Port to connect to
+        user='maxwell.nyimbili',  # Your MySQL username
+        password='L3gendary1864',  # Your MySQL password
+        database='webtech_fall2024_maxwell_nyimbili'  # Database name
     )
 
 
