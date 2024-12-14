@@ -77,12 +77,12 @@
 
          /* Glass effect for individual article cards */
         .card {
-            background: rgba(255, 255, 255, 0.69);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 16px;
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(2.3px);
-            -webkit-backdrop-filter: blur(2.3px);
-            border: 1px solid rgba(255, 255, 255, 0.17);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             overflow: hidden;
             transition: transform 0.3s ease-in-out;
         }
@@ -281,6 +281,7 @@
         <!-- Articles Section -->
         <div id="articles" class="mt-4">
             <h2>Latest News</h2>
+            <br>
             <div id="news-cards" class="row g-4">
                 <!-- News articles will be injected here dynamically -->
             </div>
