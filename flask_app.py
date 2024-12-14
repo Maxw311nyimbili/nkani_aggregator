@@ -236,7 +236,6 @@ def logout():
 #         return jsonify({'success': False, 'message': str(e)}), 500
 
 
-
 @app.route('/fetch_news', methods=['POST'])
 def fetch_news():
     try:
