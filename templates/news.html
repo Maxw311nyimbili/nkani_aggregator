@@ -9,11 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
+        body{
+            overflow-y: hidden;
+        }
         .hero {
-            background: #282654;
+            background: url(./static/images/Banner-2.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
             color: white;
             padding: 50px 0;
             text-align: center;
+            width: 100%;
         }
 
         .category-checkbox {
@@ -28,12 +36,30 @@
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+        #articles {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
 
+         /* Glass effect for individual article cards */
+        .card {
+            background: rgba(255, 255, 255, 0.87);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.73);
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
 
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
+        /* Optional: Add hover effect for interactivity */
+        .card:hover {
+            transform: scale(1.05);
         }
 
         .article-card-body {
@@ -89,6 +115,67 @@
             background: #6f246cbe;
             color: white;
         }
+        /* Bubble */
+
+        .bubble {
+            width: 50vmin;
+            height: 50vmin;
+            background: hsl(212, 100%, 71%);
+            border: 4.5vmin solid hsl(212, 100%, 81%);
+            position: absolute;
+            top: calc(50% - (50vmin * 0.49));
+            left: calc(50% - (50vmin * 0.49));
+            overflow: visible;
+            border-radius: 48% 40% 62% 47% / 61% 49% 64% 43%;
+            animation: rotate 35s infinite linear;
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(1turn);
+            }
+        }
+
+        .bubble:before {
+            content: "";
+            position: absolute;
+            top: 5vmin;
+            left: 5vmin;
+            width: calc(100% - (50vmin * 0.3));
+            height: calc(100% - (50vmin * 0.3));
+            background: hsl(212, 100%, 51%);
+            border: 3.25vmin solid hsl(212, 100%, 61%);
+            border-radius: 41% 40% 50% 55% / 49% 52% 51% 43%;
+            z-index: -2;
+            animation: rotateBefore 35s infinite linear;
+        }
+
+        @keyframes rotateBefore {
+            0% {
+                transform: rotate(-2turn);
+            }
+        }
+
+        .bubble:after {
+            content: "";
+            position: absolute;
+            top: 10vmin;
+            left: 10vmin;
+            width: calc(100% - (25vmin));
+            height: calc(100% - (25vmin));
+            background: hsl(212, 100%, 31%);
+            border: 2.5vmin solid hsl(212, 100%, 41%);
+            border-radius: 42% 63% 51% 60% / 47% 62% 42% 52%;
+            animation: rotateAfter 35s infinite linear;
+        }
+
+        @keyframes rotateAfter {
+            0% {
+                transform: rotate(2turn);
+            }
+        }
+
    
     </style>
 </head>
@@ -124,9 +211,9 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Stay Updated with the Latest News</h1>
-        <p>Choose categories and countries to get the latest news tailored for you.</p>
-    </section>
+<!--        <h1>Stay Updated with the Latest News</h1>-->
+<!--        <p>Choose categories and countries to get the latest news tailored for you.</p>-->
+
 
     <!-- Main Content -->
     <div class="container my-5">
@@ -173,6 +260,8 @@
             </div>
         </div>
     </div>
+
+    </section>
 
 
 
