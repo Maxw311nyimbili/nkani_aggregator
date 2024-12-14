@@ -78,7 +78,7 @@
 
 
          /* Glass effect for individual article cards */
-        .card {
+        .card-container {
             background: rgba(255, 255, 255, 0.2) !important;
             color: black !important;
             border-radius: 16px !important;
@@ -91,7 +91,7 @@
         }
 
 
-        .card:hover {
+        .card-container:hover {
             transform: scale(1.05);
         }
 
@@ -411,7 +411,7 @@ function displayArticles(articles) {
         const card = document.createElement('div');
         card.classList.add('col-md-4'); // This will create a 3-column layout for cards
         card.innerHTML = `
-            <div class="card mb-4">
+            <div class="card-container mb-4">
                 <div class="card-body">
                     <h5 class="card-title">${article.title || 'No Title'}</h5>
                     <p class="card-text" style="margin-top: 25px; margin-bottom:25px;"><small class="text-muted" style="color: white !important;">Published at: ${new Date(article.publishedAt).toLocaleString()}</small></p>
