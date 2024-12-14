@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from rich.markup import render
+
 import util
 import pandas as pd
 import logging
@@ -29,7 +31,7 @@ def get_db_connection():
         host='M4XW311.mysql.pythonanywhere-services.com',
         user='M4XW311',
         password='L3gendary1864',
-        database='webtech_final_project'
+        database="M4XW311$default"
     )
 
 
@@ -61,9 +63,13 @@ def verify_password(stored_password: str, password: str, salt: bytes) -> bool:
 
 
 
-
 @app.route('/')
 def index():
+    return render_template('index.html')
+
+
+@app.route('/news')
+def news():
     # Fetch news articles and comments
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -75,7 +81,7 @@ def index():
 
     conn.close()
 
-    return render_template('index.html',
+    return render_template('news.html',
                            articles=articles,
                            comments=comments,
                            logged_in=session.get('logged_in'),
@@ -146,7 +152,7 @@ def login():
                 session['role'] = role_name  # Store role in session
                 session['logged_in'] = True  # Mark user as logged in
 
-                return redirect(url_for('index'))
+                return redirect(url_for('news'))
 
         return "Invalid username or password"
 
@@ -283,17 +289,17 @@ def fetch_news():
         app.logger.error(f"Unexpected error: {str(e)}")
         return jsonify({'error': 'An unexpected error occurred, please try again later'}), 500
 
-def create_default_roles():
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT COUNT(*) FROM user_roles WHERE role_name IN ('admin', 'regular_user')")
-    result = cursor.fetchone()
-    if result[0] == 0:
-        cursor.execute("INSERT INTO user_roles (role_name) VALUES ('admin')")
-        cursor.execute("INSERT INTO user_roles (role_name) VALUES ('regular_user')")
-        conn.commit()
-        conn.close()
-
-create_default_roles()
+# def create_default_roles():
+#     conn = get_db_connection()
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT COUNT(*) FROM user_roles WHERE role_name IN ('admin', 'regular_user')")
+#     result = cursor.fetchone()
+#     if result[0] == 0:
+#         cursor.execute("INSERT INTO user_roles (role_name) VALUES ('admin')")
+#         cursor.execute("INSERT INTO user_roles (role_name) VALUES ('regular_user')")
+#         conn.commit()
+#         conn.close()
+#
+# create_default_roles()
 if __name__ == '__main__':
     app.run(debug=True)

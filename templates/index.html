@@ -9,11 +9,18 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
+        body{
+            overflow-y: hidden;
+        }
         .hero {
-            background: #282654;
+            background: url(./images/Banner-2.png);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
             color: white;
             padding: 50px 0;
             text-align: center;
+            width: 100%;
         }
 
         .category-checkbox {
@@ -65,7 +72,7 @@
             margin-bottom: 10px;
             margin-left: 15px;
             margin-right: 15px;
-  
+
         }
         .btn-secondary:hover{
             background-color:#ffffff;
@@ -89,7 +96,7 @@
             background: #6f246cbe;
             color: white;
         }
-   
+
     </style>
 </head>
 <body>
@@ -123,362 +130,14 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <h1>Stay Updated with the Latest News</h1>
-        <p>Choose categories and countries to get the latest news tailored for you.</p>
-    </section>
 
-    <!-- Main Content -->
-    <div class="container my-5">
-        <div class="row">
-            <!-- Categories Selection -->
-            <div class="col-md-4 mb-4">
-                <h4>Select Categories</h4>
-                <div class="form-check category-checkbox">
-                    <input class="form-check-input" type="checkbox" id="business">
-                    <label class="form-check-label" for="business">Business</label>
-                </div>
-                <div class="form-check category-checkbox">
-                    <input class="form-check-input" type="checkbox" id="technology">
-                    <label class="form-check-label" for="technology">Technology</label>
-                </div>
-                <div class="form-check category-checkbox">
-                    <input class="form-check-input" type="checkbox" id="sports">
-                    <label class="form-check-label" for="sports">Sports</label>
-                </div>
-            </div>
-
-            <!-- Country Selection -->
-            <div class="col-md-4 mb-4">
-                <h4>Select Country</h4>
-                <select id="country" class="form-select" onchange="toggleOtherCountryInput()">
-                    <option value="South Sudan">South Sudan</option>
-                    <option value="Zambia">Zambia</option>
-                    <option value="Other">Other</option>
-                </select>
-                <input type="text" id="other-country" class="form-control mt-2" placeholder="Enter country" style="display: none;">
-            </div>
-
-            <!-- Fetch News Button -->
-            <div class="col-md-4 mb-4 text-center">
-                <button class="btn btn-custom btn-lg" onclick="fetchNews()">Fetch News</button>
-            </div>
-        </div>
-
-        <!-- Articles Section -->
-        <div id="articles" class="mt-4">
-            <h2>Latest News</h2>
-            <div id="news-cards" class="row g-4">
-                <!-- News articles will be injected here dynamically -->
-            </div>
-        </div>
+<section class="hero d-flex flex-column justify-content-center align-items-center text-center vh-100">
+    <h1>Stay Updated with the Latest News</h1>
+    <p>Choose categories and countries to get the latest news tailored for you.</p>
+    <div class="col-md-4 mb-4">
+      <a href="{{ url_for('index') }}" class="btn btn-custom btn-lg" style="text-decoration: none;"><button>Join us</button></a>
     </div>
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="sentimentModal" tabindex="-1" aria-labelledby="sentimentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="sentimentModalLabel">Sentiment and Sector Impact</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h6>Sentiment:</h6>
-                <p id="sentiment-text">No Sentiment</p>
-                <h6>Sector Impact:</h6>
-                <ul id="sector-impact-list">
-                    <li>Energy: Not available</li>
-                    <li>Finance: Not available</li>
-                    <li>Healthcare: Not available</li>
-                    <li>Retail: Not available</li>
-                    <li>Technology: Not available</li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- Comments Modal -->
-<div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="commentsModalLabel">Comments</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="comments-section">
-            <!-- Existing comments will be appended here -->
-          </div>
-          <textarea id="new-comment" class="form-control my-3" placeholder="Write your comment here..."></textarea>
-          <button id="post-comment-btn" class="btn btn-success">Post Comment</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  
-<script>
-
-function toggleOtherCountryInput() {
-        const countrySelect = document.getElementById('country');
-        const otherCountryInput = document.getElementById('other-country');
-        // Show input field if "Other" is selected
-        if (countrySelect.value === 'Other') {
-            otherCountryInput.style.display = 'block';
-        } else {
-            otherCountryInput.style.display = 'none';
-        }
-    }
-
- function fetchNews() {
-    if (!{{ logged_in|tojson }}) {
-        alert("You must be logged in to fetch news.");
-        return;
-    }
-
-    const categories = [];
-    if (document.getElementById('business').checked) categories.push('Business');
-    if (document.getElementById('technology').checked) categories.push('Technology');
-    if (document.getElementById('sports').checked) categories.push('Sports');
-    
-    const country = document.getElementById('country').value;
-    const otherCountry = document.getElementById('other-country').value;
-
-    const data = { 
-        categories, 
-        country: country === 'Other' ? otherCountry : country 
-    };
-
-    fetch('/fetch_news', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch news');
-            return response.json();
-        })
-        .then(data => displayArticles(data.articles))
-        .catch(error => console.error('Error fetching news:', error));
-}
-
-
-// Display Articles
-function displayArticles(articles) {
-    const newsCardsContainer = document.getElementById('news-cards');
-    newsCardsContainer.innerHTML = ''; // Clear previous cards
-
-    if (!articles || articles.length === 0) {
-        console.log('No articles to display');
-        return;
-    }
-
-    articles.forEach(article => {
-        console.log('Article:', article); // Log the individual article to check its structure
-
-        // Check if the article has a valid imageUrl, otherwise use a default fallback image
-        const imageUrl = article.imageUrl || 'default-image.jpg'; // Use default image if no image URL
-
-        // Create a new card for each article
-        const card = document.createElement('div');
-        card.classList.add('col-md-4'); // This will create a 3-column layout for cards
-        card.innerHTML = `
-            <div class="card mb-4">
-                <img src="${'./static/images/default-banner.png'}" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">${article.title || 'No Title'}</h5>
-                    <p class="card-text" style="margin-top: 25px; margin-bottom:25px;"><small class="text-muted" style="color: white !important;">Published at: ${new Date(article.publishedAt).toLocaleString()}</small></p>
-                 
-                    <button class="btn btn-info sentiment-btn" data-article='${JSON.stringify(article)}'>
-                        Sentiment Analysis
-                    </button>
-                    <a href="${article.link}" class="btn btn-primary" target="_blank">Read More</a>
-                </div>
-                <button class="btn btn-secondary mt-2" onclick="openCommentsModal('${article.link}', '${article.title}')">
-                    View/Add Comments
-                </button>
-            </div>
-        `;
-
-        // Append the card to the container
-        newsCardsContainer.appendChild(card);
-
-        // Fetch and display existing comments for this article
-        fetchComments(article.link);
-    });
-}
-
-document.addEventListener('click', (event) => {
-    if (event.target.classList.contains('sentiment-btn')) {
-        const article = JSON.parse(event.target.dataset.article);
-        openSentimentModal(article);
-    
-    }
-});
-
-function openSentimentModal(article) {
-    if (!article) {
-        console.error('Article data is missing');
-        return;
-    }
-
-    document.getElementById('sentiment-text').textContent = article.sentiment || 'No Sentiment';
-
-    const sectorImpactList = document.getElementById('sector-impact-list');
-    sectorImpactList.innerHTML = ''; // Clear previous sector impact data
-
-    const sectors = ['Energy', 'Finance', 'Healthcare', 'Retail', 'Technology'];
-    sectors.forEach(sector => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `${sector}: ${article.sectorImpact?.[sector] || 'Not available'}`;
-        sectorImpactList.appendChild(listItem);
-    });
-
-    // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('sentimentModal'));
-    modal.show();
-}
-
-
-function openCommentsModal(articleLink, articleTitle) {
-    // Set the modal title dynamically
-    document.getElementById('commentsModalLabel').textContent = `Comments for: ${articleTitle}`;
-
-    // Fetch existing comments
-    fetchComments(articleLink, displayModalComments);
-
-    // Store the article link for posting new comments
-    document.getElementById('post-comment-btn').onclick = () => submitComment(articleLink);
-
-    // Open the modal
-    const commentsModal = new bootstrap.Modal(document.getElementById('commentsModal'));
-    commentsModal.show();
-}
-
-function displayModalComments(comments) {
-    const commentsSection = document.getElementById('comments-section');
-    commentsSection.innerHTML = ''; // Clear previous comments
-
-    if (!comments || comments.length === 0) {
-        commentsSection.innerHTML = '<p class="text-muted">No comments yet. Be the first to comment!</p>';
-        return;
-    }
-
-    comments.forEach(comment => {
-        const commentDiv = document.createElement('div');
-        commentDiv.classList.add('mb-3');
-        commentDiv.innerHTML = `
-            <div class="border p-2">
-                <p><strong>${comment.user}:</strong> ${comment.text}</p>
-                <small class="text-muted">${new Date(comment.timestamp).toLocaleString()}</small>
-            </div>
-        `;
-        commentsSection.appendChild(commentDiv);
-    });
-}
-
-
-// Submit Comment for a specific article
-function submitComment(articleId) {
-    const commentInput = document.getElementById('new-comment');
-    const commentText = commentInput.value.trim();
-
-    if (!commentText) {
-        alert('Comment cannot be empty!');
-        return;
-    }
-
-    fetch(`/comment/${articleId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment: commentText })
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                commentInput.value = ''; // Clear input field
-                fetchComments(articleId); // Reload comments
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => console.error('Error posting comment:', error));
-}
-
-
-
-// Fetch Comments for a Specific Article
-// Fetch and display comments for a specific article
-function fetchComments(articleId) {
-    fetch(`/get_comments/${articleId}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.comments) {
-                displayModalComments(data.comments);
-            } else {
-                console.error('Error fetching comments:', data.message);
-            }
-        })
-        .catch(error => console.error('Error fetching comments:', error));
-}
-
-
-// Display comments for a specific article
-function displayModalComments(comments) {
-    const commentsSection = document.getElementById('comments-section');
-    commentsSection.innerHTML = ''; // Clear existing comments
-
-    if (!comments || comments.length === 0) {
-        commentsSection.innerHTML = '<p class="text-muted">No comments yet. Be the first to comment!</p>';
-        return;
-    }
-
-    comments.forEach(comment => {
-        const commentDiv = document.createElement('div');
-        commentDiv.classList.add('mb-3');
-        commentDiv.innerHTML = `
-            <div class="border p-2">
-                <p><strong>${comment.username}:</strong> ${comment.commentText}</p>
-                <small class="text-muted">
-                    <button class="btn btn-sm btn-danger" onclick="deleteComment('${comment.id}', '${comment.articleId}')">
-                        Delete
-                    </button>
-                </small>
-            </div>
-        `;
-        commentsSection.appendChild(commentDiv);
-    });
-}
-
-
-// Delete Comment
-function deleteComment(commentId, articleId) {
-    fetch(`/delete_comment/${commentId}`, { method: 'POST' })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                fetchComments(articleId); // Reload comments after deletion
-            } else {
-                alert(data.message);
-            }
-        })
-        .catch(error => console.error('Error deleting comment:', error));
-}
-
-</script>
-
-    <!-- Bootstrap JS and Popper.js -->
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"></script>
-
+</section>
 
 </body>
 </html>
