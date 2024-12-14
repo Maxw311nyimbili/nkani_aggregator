@@ -86,7 +86,7 @@ def news():
                         #   comments=comments,
                         #   logged_in=session.get('logged_in'),
                         #   username=session.get('username'))
-    return render_template('index.html',
+    return render_template('news.html',
                       logged_in=session.get('logged_in'),
                       username=session.get('username'))
 
