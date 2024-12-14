@@ -13,7 +13,7 @@
             overflow-y: hidden;
         }
         .hero {
-            background: url(./images/Banner-2.png);
+            background: url(./static/images/Banner-2.png);
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -131,13 +131,13 @@
 
     <!-- Hero Section -->
 
-<section class="hero d-flex flex-column justify-content-center align-items-center text-center vh-100">
-    <h1>Stay Updated with the Latest News</h1>
-    <p>Choose categories and countries to get the latest news tailored for you.</p>
-    <div class="col-md-4 mb-4">
-      <a href="{{ url_for('index') }}" class="btn btn-custom btn-lg" style="text-decoration: none;"><button>Join us</button></a>
-    </div>
-</section>
+    <section class="hero d-flex flex-column justify-content-center align-items-center text-center vh-100">
+        <h1>Stay Updated with the Latest News</h1>
+        <p>Choose categories and countries to get the latest news tailored for you.</p>
+        <div class="col-md-4 mb-4">
+          <a href="{{ url_for('index') }}" style="text-decoration: none;"><button class="btn btn-custom btn-lg">Join us</button></a>
+        </div>
+    </section>
 
 </body>
 </html>
