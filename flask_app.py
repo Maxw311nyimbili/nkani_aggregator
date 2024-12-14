@@ -34,11 +34,8 @@ def get_db_connection():
         database="M4XW311$default"
     )
 
-
-
 # Set up logging for better error tracking
 logging.basicConfig(level=logging.DEBUG)
-
 
 # Password hashing using cryptography (PBKDF2)
 # Password hashing using cryptography (PBKDF2)
@@ -60,7 +57,27 @@ def verify_password(stored_password: str, password: str, salt: bytes) -> bool:
     app.logger.debug(f"Hashed password attempt: {hashed_attempt}")
     return stored_password == hashed_attempt
 
-
+# @app.route('/news')
+# def news():
+#     # Fetch news articles and comments
+#     conn = get_db_connection()
+#     cursor = conn.cursor()
+#     # cursor.execute("SELECT * FROM articles")
+#     # articles = cursor.fetchall()
+#
+#     # cursor.execute("SELECT * FROM comments")
+#     # comments = cursor.fetchall()
+#
+#     conn.close()
+#
+#     # return render_template('index.html',
+#                         #   articles=articles,
+#                         #   comments=comments,
+#                         #   logged_in=session.get('logged_in'),
+#                         #   username=session.get('username'))
+#     return render_template('news.html',
+#                       logged_in=session.get('logged_in'),
+#                       username=session.get('username'))
 
 
 @app.route('/')
@@ -70,22 +87,7 @@ def index():
 
 @app.route('/news')
 def news():
-    # Fetch news articles and comments
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    # cursor.execute("SELECT * FROM articles")
-    # articles = cursor.fetchall()
 
-    # cursor.execute("SELECT * FROM comments")
-    # comments = cursor.fetchall()
-
-    conn.close()
-
-    # return render_template('index.html',
-                        #   articles=articles,
-                        #   comments=comments,
-                        #   logged_in=session.get('logged_in'),
-                        #   username=session.get('username'))
     return render_template('news.html',
                       logged_in=session.get('logged_in'),
                       username=session.get('username'))
