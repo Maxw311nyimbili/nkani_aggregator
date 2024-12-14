@@ -73,19 +73,22 @@ def news():
     # Fetch news articles and comments
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM articles")
-    articles = cursor.fetchall()
+    # cursor.execute("SELECT * FROM articles")
+    # articles = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM comments")
-    comments = cursor.fetchall()
+    # cursor.execute("SELECT * FROM comments")
+    # comments = cursor.fetchall()
 
     conn.close()
 
-    return render_template('news.html',
-                           articles=articles,
-                           comments=comments,
-                           logged_in=session.get('logged_in'),
-                           username=session.get('username'))
+    # return render_template('index.html',
+                        #   articles=articles,
+                        #   comments=comments,
+                        #   logged_in=session.get('logged_in'),
+                        #   username=session.get('username'))
+    return render_template('index.html',
+                      logged_in=session.get('logged_in'),
+                      username=session.get('username'))
 
 
 @app.route('/signup', methods=['GET', 'POST'])
