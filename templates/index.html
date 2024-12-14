@@ -96,6 +96,68 @@
             background: #6f246cbe;
             color: white;
         }
+        <!--Bubble Animation-->
+        /* Bubble */
+
+        .bubble {
+            width: 50vmin;
+            height: 50vmin;
+            background: hsl(212, 100%, 71%);
+            border: 4.5vmin solid hsl(212, 100%, 81%);
+            position: absolute;
+            top: calc(50% - (50vmin * 0.49));
+            left: calc(50% - (50vmin * 0.49));
+            overflow: visible;
+            border-radius: 48% 40% 62% 47% / 61% 49% 64% 43%;
+            animation: rotate 35s infinite linear;
+            z-index: 1;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(1turn);
+            }
+        }
+
+        .bubble:before {
+            content: "";
+            position: absolute;
+            top: 5vmin;
+            left: 5vmin;
+            width: calc(100% - (50vmin * 0.3));
+            height: calc(100% - (50vmin * 0.3));
+            background: hsl(212, 100%, 51%);
+            border: 3.25vmin solid hsl(212, 100%, 61%);
+            border-radius: 41% 40% 50% 55% / 49% 52% 51% 43%;
+            z-index: -2;
+            animation: rotateBefore 35s infinite linear;
+        }
+
+        @keyframes rotateBefore {
+            0% {
+                transform: rotate(-2turn);
+            }
+        }
+
+        .bubble:after {
+            content: "";
+            position: absolute;
+            top: 10vmin;
+            left: 10vmin;
+            width: calc(100% - (25vmin));
+            height: calc(100% - (25vmin));
+            background: hsl(212, 100%, 31%);
+            border: 2.5vmin solid hsl(212, 100%, 41%);
+            border-radius: 42% 63% 51% 60% / 47% 62% 42% 52%;
+            animation: rotateAfter 35s infinite linear;
+        }
+
+        @keyframes rotateAfter {
+            0% {
+                transform: rotate(2turn);
+            }
+        }
+
 
     </style>
 </head>
@@ -132,9 +194,10 @@
     <!-- Hero Section -->
 
     <section class="hero d-flex flex-column justify-content-center align-items-center text-center vh-100">
-        <h1>Stay Updated with the Latest News</h1>
-        <p>Choose categories and countries to get the latest news tailored for you.</p>
-        <div class="col-md-4 mb-4">
+      <div class="bubble"></div>
+        <h1 style="z-index: 2;">Stay Updated with the Latest News</h1>
+        <p style="z-index: 2;">Choose categories and countries to get the latest news tailored for you.</p>
+        <div class="col-md-4 mb-4" style="z-index: 2;">
           <a href="{{ url_for('login') }}" style="text-decoration: none;"><button class="btn btn-custom btn-lg">Join us</button></a>
         </div>
     </section>
