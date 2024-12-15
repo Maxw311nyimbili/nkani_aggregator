@@ -403,11 +403,11 @@ function displayArticles(articles) {
         console.log('Article:', article); // Log the individual article to check its structure
 
         // Check if the article has a valid imageUrl, otherwise use a default fallback image
-        const imageUrl = article.imageUrl || 'default-image.jpg'; // Use default image if no image URL
+        const imageUrl = article.imageUrl || 'default-image.jpg';
 
         // Create a new card for each article
         const card = document.createElement('div');
-        card.classList.add('col-md-4'); // This will create a 3-column layout for cards
+        card.classList.add('col-md-4');
         card.innerHTML = `
             <div class="card_container mb-4">
                 <div class="card-body">
@@ -513,7 +513,9 @@ function submitComment(articleId) {
         return;
     }
 
-    fetch(`/comment/${articleId}`, {
+    const encodedArticleId = encodeURIComponent(articleId); // Encode the article ID
+
+    fetch(`/comment/${encodedArticleId}`, { // Use the encoded article ID in the URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ comment: commentText })
@@ -530,22 +532,35 @@ function submitComment(articleId) {
         .catch(error => console.error('Error posting comment:', error));
 }
 
-
-
 // Fetch Comments for a Specific Article
-// Fetch and display comments for a specific article
 function fetchComments(articleId) {
-    fetch(`/get_comments/${articleId}`)
-        .then(response => response.json())
+    const encodedArticleId = encodeURIComponent(articleId);
+    const commentsSection = document.getElementById('comments-section');
+    commentsSection.innerHTML = '<p class="text-muted">Loading comments...</p>';
+
+    fetch(`/get_comments/${encodedArticleId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.comments) {
                 displayModalComments(data.comments);
             } else {
-                console.error('Error fetching comments:', data.message);
+                commentsSection.innerHTML = '<p class="text-muted">No comments available.</p>';
             }
         })
-        .catch(error => console.error('Error fetching comments:', error));
+        .catch(error => {
+            console.error(`Error fetching comments for article ${articleId}:`, error);
+            commentsSection.innerHTML = '<p class="text-danger">Failed to load comments.</p>';
+        });
 }
+
+
+
+
 
 
 // Display comments for a specific article
@@ -578,18 +593,26 @@ function displayModalComments(comments) {
 
 // Delete Comment
 function deleteComment(commentId, articleId) {
+    if (!confirm('Are you sure you want to delete this comment?')) {
+        return;
+    }
+
     fetch(`/delete_comment/${commentId}`, { method: 'POST' })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
-                fetchComments(articleId); // Reload comments after deletion
+                fetchComments(articleId);
             } else {
-                alert(data.message);
+                alert(`Failed to delete comment: ${data.message}`);
             }
         })
-        .catch(error => console.error('Error deleting comment:', error));
+        .catch(error => console.error(`Error deleting comment ${commentId} for article ${articleId}:`, error));
 }
-
 </script>
 
     <!-- Bootstrap JS and Popper.js -->

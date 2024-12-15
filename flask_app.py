@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request, redirect, url_for, s
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from rich.markup import render
+from urllib.parse import unquote
 
 import util
 import pandas as pd
@@ -188,6 +189,7 @@ def logout():
 
 @app.route('/comment/<article_id>', methods=['POST'])
 def comment(article_id):
+    article_id = unquote(article_id)
     if 'user_id' not in session:
         return jsonify({'success': False, 'message': 'You must be logged in to comment.'}), 400
 
@@ -228,6 +230,7 @@ def delete_comment(comment_id):
 
 @app.route('/get_comments/<article_id>', methods=['GET'])
 def get_comments(article_id):
+    article_id = unquote(article_id)
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
