@@ -74,19 +74,6 @@
         }
         <!--End of Scroll bar-->
 
-
-         /* Glass effect for individual article cards */
-        .card_container {
-            background: rgba(255, 255, 255, 0.8) !important; /* Less transparent */
-            border-radius: 16px !important;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-            backdrop-filter: blur(3px) !important; /* Reduced blur */
-            -webkit-backdrop-filter: blur(3px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.5) !important; /* Slightly less transparent border */
-            overflow: hidden;
-
-        }
-
         .card_container:hover {
             transform: scale(1.05);
         }
@@ -220,9 +207,18 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if session.get('logged_in') %}
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link" href="#">Welcome, {{ session.get('username') }}</a>-->
+<!--                        </li>-->
+
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Welcome, {{ session.get('username') }}</a>
+                                <a class="nav-link" href="{{ url_for('news') }}">news</a>
                         </li>
+
+                          <li class="nav-item">
+                                <a class="nav-link" href="#">Profile</a>
+                         </li>
+
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
                         </li>
@@ -411,7 +407,7 @@ function displayArticles(articles) {
         const card = document.createElement('div');
         card.classList.add('col-md-4');
         card.innerHTML = `
-            <div class="card_container mb-4" style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; transition: transform 0.3s ease-in-out !important; padding: 15px !important;">
+            <div class="card_container mb-4" style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
 
                 <div class="card-body">
                     <h5 class="card-title">${article.title || 'No Title'}</h5>
