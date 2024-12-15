@@ -194,7 +194,7 @@ def logout():
     # Redirect to the login page or homepage
     return redirect(url_for('login'))
 
-
+# INSERTING A COMMENT IN THE DATABASE
 @app.route('/comment', methods=['POST'])
 def comment():
     # Extract data from the JSON body of the request
@@ -239,7 +239,56 @@ def comment():
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
 
-# Delete comment functionality
+# UPDATING AN INSERTED COMMENT
+@app.route('/comment', methods=['PUT'])
+def update_comment():
+    # Extract data from the JSON body of the request
+    data = request.get_json()
+    print(data)
+
+    if not data:
+        return jsonify({'success': False, 'message': 'No data provided.'}), 400
+
+    comment_id = data.get('comment_id')  # Get the comment ID from the body
+    updated_text = data.get('comment')  # Get the updated comment text from the body
+
+    if not comment_id or not updated_text:
+        return jsonify({'success': False, 'message': 'Comment ID and updated text are required.'}), 400
+
+    # Check if the user is logged in
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'You must be logged in to update a comment.'}), 400
+
+    user_id = session['user_id']
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Check if the comment exists and belongs to the logged-in user
+        cursor.execute("""
+            SELECT id FROM comments WHERE id = %s AND user_id = %s
+        """, (comment_id, user_id))
+        result = cursor.fetchone()
+
+        if not result:
+            return jsonify({'success': False, 'message': 'Comment not found or you do not have permission to update it.'}), 403
+
+        # Update the comment text
+        cursor.execute("""
+            UPDATE comments SET comment_text = %s WHERE id = %s
+        """, (updated_text, comment_id))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({'success': True, 'message': 'Comment updated successfully.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+
+
+# DELETING A COMMENT FROM THE DATABASE
 @app.route('/delete_comment', methods=['POST'])
 def delete_comment():
     # Extract data from the JSON body of the request
@@ -267,7 +316,7 @@ def delete_comment():
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
 
-
+# GETTING COMMENTS FROM THE DATABASE
 @app.route('/get_comments', methods=['POST'])
 def get_comments():
     data = request.get_json(force=True)

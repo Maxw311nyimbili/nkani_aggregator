@@ -348,9 +348,6 @@
     // Access session variable passed from Flask
     const loggedInUserId = {{ user_id|tojson }};
 
-    console.log("session user id: ");
-    console.log(loggedInUserId);
-
 
 function toggleOtherCountryInput() {
         const countrySelect = document.getElementById('country');
@@ -601,21 +598,22 @@ function displayModalComments(comments) {
         // Check if the logged-in user is the same as the commenter
         const isOwnComment = Number(comment.user_id) === Number(loggedInUserId);
 
-        console.log("Displaying comments for logged-in user ID:", loggedInUserId);
-        console.log("Current comment user ID:", comment.user_id);
+       commentDiv.innerHTML = `
+    <div class="border p-2">
+        <p><strong>${comment.username}:</strong> <span id="commentText-${comment.id}">${comment.commentText}</span></p>
+        <small class="text-muted">
+            ${isOwnComment ? `
+                <button class="btn btn-sm btn-primary" onclick="editComment('${comment.id}', '${comment.articleId}')">
+                    Edit
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="deleteComment('${comment.id}', '${comment.articleId}')">
+                    Delete
+                </button>
+            ` : ''}
+        </small>
+    </div>
+`;
 
-
-        commentDiv.innerHTML = `
-            <div class="border p-2">
-                <p><strong>${comment.username}:</strong> ${comment.commentText}</p>
-                <small class="text-muted">
-                    ${isOwnComment ? `
-                        <button class="btn btn-sm btn-danger" onclick="deleteComment('${comment.id}', '${comment.articleId}')">
-                            Delete
-                        </button>` : ''}
-                </small>
-            </div>
-        `;
 
         commentsSection.appendChild(commentDiv);
     });
@@ -652,6 +650,50 @@ function deleteComment(commentId, articleId) {
         })
         .catch(error => console.error(`Error deleting comment ${commentId} for article ${articleId}:`, error));
 }
+
+
+//EDITING A COMMENT FUNCTIONS
+    function editComment(commentId, articleId) {
+    // Locate the current comment text span
+    const commentTextElement = document.getElementById(`commentText-${commentId}`);
+    const currentText = commentTextElement.innerText;
+
+    // Replace the text with an input field and Save/Cancel buttons
+    commentTextElement.innerHTML = `
+        <input type="text" id="editInput-${commentId}" class="form-control form-control-sm" value="${currentText}" />
+        <button class="btn btn-sm btn-success mt-1" onclick="saveEditedComment('${commentId}', '${articleId}')">Save</button>
+        <button class="btn btn-sm btn-secondary mt-1" onclick="cancelEdit('${commentId}', '${currentText}')">Cancel</button>
+    `;
+}
+
+    function saveEditedComment(commentId, articleId) {
+    const inputElement = document.getElementById(`editInput-${commentId}`);
+    const newText = inputElement.value;
+
+    fetch('/comment', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            comment_id: commentId,
+            comment: newText
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update the comment display with the new text
+            const commentTextElement = document.getElementById(`commentText-${commentId}`);
+            commentTextElement.innerText = newText;
+        } else {
+            alert(data.message || 'Failed to update comment.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
 
 </script>
 
