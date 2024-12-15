@@ -411,7 +411,7 @@ function displayArticles(articles) {
         const card = document.createElement('div');
         card.classList.add('col-md-4');
         card.innerHTML = `
-            <div class="card_container mb-4" style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; transition: transform 0.3s ease-in-out !important;">
+            <div class="card_container mb-4" style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important; backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important; border: 1px solid rgba(255, 255, 255, 0.3) !important; transition: transform 0.3s ease-in-out !important; padding: 15px !important;">
 
                 <div class="card-body">
                     <h5 class="card-title">${article.title || 'No Title'}</h5>
