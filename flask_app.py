@@ -107,6 +107,7 @@ def news():
     return render_template('news.html',
                            articles=articles,
                            comments=comments,
+                           user_id=session.get('user_id'),
                            logged_in=session.get('logged_in'),
                            username=session.get('username'))
 

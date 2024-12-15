@@ -345,6 +345,9 @@
   
 <script>
 
+    // Access session variable passed from Flask
+    const loggedInUserId = {{ user_id|tojson }};
+
 function toggleOtherCountryInput() {
         const countrySelect = document.getElementById('country');
         const otherCountryInput = document.getElementById('other-country');
@@ -409,7 +412,7 @@ function displayArticles(articles) {
         const card = document.createElement('div');
         card.classList.add('col-md-4');
         card.innerHTML = `
-            <div class="card_container mb-4">
+            <div class="card_container mb-4" style="background: rgba(255, 255, 255, 0.2) !important;">
                 <div class="card-body">
                     <h5 class="card-title">${article.title || 'No Title'}</h5>
                     <p class="card-text" style="margin-top: 25px; margin-bottom:25px;"><small class="text-muted" style="color: white !important;">Published at: ${new Date(article.publishedAt).toLocaleString()}</small></p>
@@ -531,7 +534,7 @@ function submitComment(articleId) {
         .then(data => {
             if (data.success) {
                 commentInput.value = ''; // Clear input field
-                fetchComments(articleId); // Reload comments
+                fetchComments(articleId, loggedInUserId); // Reload comments
             } else {
                 alert(data.message);
             }
@@ -541,7 +544,7 @@ function submitComment(articleId) {
 
 
 // Fetch Comments for a Specific Article
-function fetchComments(articleLink) {
+function fetchComments(articleLink, loggedInUserId) {
     const encodedArticleLink = encodeURIComponent(articleLink);  // Ensure the link is URL encoded
     const commentsSection = document.getElementById('comments-section');
     commentsSection.innerHTML = '<p class="text-muted">Loading comments...</p>';
@@ -562,7 +565,7 @@ function fetchComments(articleLink) {
         })
         .then(data => {
             if (data.comments) {
-                displayModalComments(data.comments);
+                displayModalComments(data.comments, loggedInUserId);
             } else {
                 commentsSection.innerHTML = '<p class="text-muted">No comments available.</p>';
             }
@@ -576,7 +579,7 @@ function fetchComments(articleLink) {
 
 
 // Display comments for a specific article
-function displayModalComments(comments) {
+function displayModalComments(comments, loggedInUserId) {
     const commentsSection = document.getElementById('comments-section');
     commentsSection.innerHTML = ''; // Clear existing comments
 
@@ -588,16 +591,22 @@ function displayModalComments(comments) {
     comments.forEach(comment => {
         const commentDiv = document.createElement('div');
         commentDiv.classList.add('mb-3');
+
+        // Check if the logged-in user is the same as the commenter
+        const isOwnComment = comment.userId === loggedInUserId;
+
         commentDiv.innerHTML = `
             <div class="border p-2">
                 <p><strong>${comment.username}:</strong> ${comment.commentText}</p>
                 <small class="text-muted">
-                    <button class="btn btn-sm btn-danger" onclick="deleteComment('${comment.id}', '${comment.articleId}')">
-                        Delete
-                    </button>
+                    ${isOwnComment ? `
+                        <button class="btn btn-sm btn-danger" onclick="deleteComment('${comment.id}', '${comment.articleId}')">
+                            Delete
+                        </button>` : ''}
                 </small>
             </div>
         `;
+
         commentsSection.appendChild(commentDiv);
     });
 }
