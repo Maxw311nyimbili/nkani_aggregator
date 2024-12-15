@@ -348,6 +348,10 @@
     // Access session variable passed from Flask
     const loggedInUserId = {{ user_id|tojson }};
 
+    console.log("session user id: );
+    console.log(loggedInUserId);
+
+
 function toggleOtherCountryInput() {
         const countrySelect = document.getElementById('country');
         const otherCountryInput = document.getElementById('other-country');
@@ -593,7 +597,11 @@ function displayModalComments(comments, loggedInUserId) {
         commentDiv.classList.add('mb-3');
 
         // Check if the logged-in user is the same as the commenter
-        const isOwnComment = comment.userId == loggedInUserId;
+        const isOwnComment = comment.userId === loggedInUserId;
+
+        console.log("session comment.user_id: );
+        console.log(comment.userId);
+        console.log(isOwnComment);
 
         commentDiv.innerHTML = `
             <div class="border p-2">
