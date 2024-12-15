@@ -289,7 +289,7 @@ def get_comments():
 
         # Modify query to handle multiple article IDs
         query = """
-            SELECT comments.id, nkani_users.username, comments.comment_text
+            SELECT comments.id, nkani_users.username, comments.comment_text, comments.user_id
             FROM comments
             JOIN nkani_users ON comments.user_id = nkani_users.id
             WHERE comments.article_id IN (%s)
@@ -300,7 +300,7 @@ def get_comments():
         conn.close()
 
         # Process the comments into a list of dictionaries
-        comment_list = [{'id': comment[0], 'username': comment[1], 'commentText': comment[2]} for comment in comments]
+        comment_list = [{'id': comment[0], 'username': comment[1], 'commentText': comment[2], 'user_id': comment[3]} for comment in comments]
 
         return jsonify({'comments': comment_list})
 
