@@ -461,7 +461,7 @@ def admin_get_comments():
         cursor.execute("""
             SELECT comments.id, comments.comment_text, nkani_users.username, articles.link
             FROM comments
-            JOIN users ON comments.user_id = nkani_users.id
+            JOIN nkani_users ON comments.user_id = nkani_users.id
             JOIN articles ON comments.article_id = articles.id
         """)
         comments = cursor.fetchall()
