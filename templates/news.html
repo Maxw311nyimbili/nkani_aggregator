@@ -348,7 +348,7 @@
     // Access session variable passed from Flask
     const loggedInUserId = {{ user_id|tojson }};
 
-    console.log("session user id: );
+    console.log("session user id: ");
     console.log(loggedInUserId);
 
 
@@ -599,7 +599,7 @@ function displayModalComments(comments, loggedInUserId) {
         // Check if the logged-in user is the same as the commenter
         const isOwnComment = comment.userId === loggedInUserId;
 
-        console.log("session comment.user_id: );
+        console.log("session comment.user_id: ");
         console.log(comment.userId);
         console.log(isOwnComment);
 
