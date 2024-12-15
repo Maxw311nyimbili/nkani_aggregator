@@ -38,7 +38,6 @@ def get_db_connection():
 logging.basicConfig(level=logging.DEBUG)
 
 # Password hashing using cryptography (PBKDF2)
-# Password hashing using cryptography (PBKDF2)
 def hash_password(password: str, salt: bytes) -> str:
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
@@ -87,10 +86,21 @@ def index():
 
 @app.route('/news')
 def news():
+    # Fetch news articles and comments
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM articles")
+    articles = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM comments")
+    comments = cursor.fetchall()
+    conn.close()
 
     return render_template('news.html',
-                      logged_in=session.get('logged_in'),
-                      username=session.get('username'))
+                           articles=articles,
+                           comments=comments,
+                           logged_in=session.get('logged_in'),
+                           username=session.get('username'))
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -148,14 +158,14 @@ def login():
             salt = base64.urlsafe_b64decode(user[7])  # Retrieve the salt
             if verify_password(stored_password, password, salt):
                 # Fetch role name from user_roles table
-                cursor.execute("SELECT role_name FROM nkani_user_roles WHERE id = %s", (user[4],))  # user[4] is the role_id
+                cursor.execute("SELECT role_name FROM nkani_user_roles WHERE id = %s", (user[4],))
                 role = cursor.fetchone()
                 role_name = role[0] if role else 'Unknown'
 
-                session['user_id'] = user[0]  # Store user_id in session
-                session['username'] = user[1]  # Store username in session
-                session['role'] = role_name  # Store role in session
-                session['logged_in'] = True  # Mark user as logged in
+                session['user_id'] = user[0]
+                session['username'] = user[1]
+                session['role'] = role_name
+                session['logged_in'] = True
 
                 return redirect(url_for('news'))
 
@@ -176,66 +186,68 @@ def logout():
     return redirect(url_for('login'))
 
 
-# @app.route('/comment/<article_id>', methods=['POST'])
-# def comment(article_id):
-#     if 'user_id' not in session:
-#         return jsonify({'success': False, 'message': 'You must be logged in to comment.'}), 400
-#
-#     user_id = session['user_id']
-#
-#     # Use request.json.get() to extract the comment when sending JSON data
-#     comment_text = request.json.get('comment')
-#
-#     if not comment_text:
-#         return jsonify({'success': False, 'message': 'Comment cannot be empty.'}), 400
-#
-#     try:
-#         conn = get_db_connection()
-#         cursor = conn.cursor()
-#         cursor.execute("INSERT INTO comments (user_id, article_id, comment) VALUES (%s, %s, %s)",
-#                        (user_id, article_id, comment_text))
-#         conn.commit()
-#         conn.close()
-#         return jsonify({'success': True, 'message': 'Comment posted successfully.'})
-#     except Exception as e:
-#         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
-#
-#
-# # Delete comment functionality
-# @app.route('/delete_comment/<comment_id>', methods=['POST'])
-# def delete_comment(comment_id):
-#     if 'user_id' not in session:
-#         return redirect(url_for('login'))
-#
-#     conn = get_db_connection()
-#     cursor = conn.cursor()
-#     cursor.execute("DELETE FROM comments WHERE id = ? AND user_id = ?", (comment_id, session['user_id']))
-#     conn.commit()
-#     conn.close()
-#
-#     return jsonify({'success': True, 'message': 'Comment deleted successfully.'}), 200
-#
-#
-# @app.route('/get_comments/<article_id>', methods=['GET'])
-# def get_comments(article_id):
-#     try:
-#         conn = get_db_connection()
-#         cursor = conn.cursor()
-#         cursor.execute("""
-#             SELECT comments.id, users.username, comments.comment
-#             FROM comments
-#             JOIN users ON comments.user_id = users.id
-#             WHERE comments.article_id = %s
-#             """, (article_id,))
-#         comments = cursor.fetchall()
-#         conn.close()
-#
-#         # Convert the results to a list of dictionaries
-#         comment_list = [{'id': comment[0], 'username': comment[1], 'commentText': comment[2]} for comment in comments]
-#
-#         return jsonify({'comments': comment_list})
-#     except Exception as e:
-#         return jsonify({'success': False, 'message': str(e)}), 500
+@app.route('/comment/<article_id>', methods=['POST'])
+def comment(article_id):
+    if 'user_id' not in session:
+        return jsonify({'success': False, 'message': 'You must be logged in to comment.'}), 400
+
+    user_id = session['user_id']
+
+    # Use request.json.get() to extract the comment when sending JSON data
+    comment_text = request.json.get('comment')
+
+    if not comment_text:
+        return jsonify({'success': False, 'message': 'Comment cannot be empty.'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO comments (user_id, article_id, comment) VALUES (%s, %s, %s)",
+                       (user_id, article_id, comment_text))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Comment posted successfully.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+
+# Delete comment functionality
+@app.route('/delete_comment/<comment_id>', methods=['POST'])
+def delete_comment(comment_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM comments WHERE id = ? AND user_id = ?", (comment_id, session['user_id']))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'success': True, 'message': 'Comment deleted successfully.'}), 200
+
+
+@app.route('/get_comments/<article_id>', methods=['GET'])
+def get_comments(article_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT comments.id, nkani_users.username, comments.comment
+            FROM comments
+            JOIN users ON comments.user_id = nkani_users.id
+            WHERE comments.article_id = %s
+            """, (article_id,))
+        comments = cursor.fetchall()
+        conn.close()
+
+        print(comments)
+
+        # Convert the results to a list of dictionaries
+        comment_list = [{'id': comment[0], 'username': comment[1], 'commentText': comment[2]} for comment in comments]
+
+        return jsonify({'comments': comment_list})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 
 @app.route('/fetch_news', methods=['POST'])
