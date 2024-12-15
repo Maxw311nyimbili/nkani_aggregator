@@ -258,7 +258,7 @@ def get_comments():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute(""" 
-            SELECT comments.id, nkani_users.username, comments.comment 
+            SELECT comments.id, nkani_users.username, comments.comment_text 
             FROM comments 
             JOIN users ON comments.user_id = nkani_users.id 
             WHERE comments.article_id = %s
