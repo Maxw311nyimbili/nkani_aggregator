@@ -591,6 +591,8 @@ function displayModalComments(comments, loggedInUserId) {
         commentsSection.innerHTML = '<p class="text-muted">No comments yet. Be the first to comment!</p>';
         return;
     }
+    console.log("comments list: ")
+    console.log(comments)
 
     comments.forEach(comment => {
         const commentDiv = document.createElement('div');
