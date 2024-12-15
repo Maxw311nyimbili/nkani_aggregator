@@ -57,33 +57,38 @@ def verify_password(stored_password: str, password: str, salt: bytes) -> bool:
     app.logger.debug(f"Hashed password attempt: {hashed_attempt}")
     return stored_password == hashed_attempt
 
-# @app.route('/news')
-# def news():
-#     # Fetch news articles and comments
-#     conn = get_db_connection()
-#     cursor = conn.cursor()
-#     # cursor.execute("SELECT * FROM articles")
-#     # articles = cursor.fetchall()
-#
-#     # cursor.execute("SELECT * FROM comments")
-#     # comments = cursor.fetchall()
-#
-#     conn.close()
-#
-#     # return render_template('index.html',
-#                         #   articles=articles,
-#                         #   comments=comments,
-#                         #   logged_in=session.get('logged_in'),
-#                         #   username=session.get('username'))
-#     return render_template('news.html',
-#                       logged_in=session.get('logged_in'),
-#                       username=session.get('username'))
+
+def get_article_id_from_link(article_link):
+    if not article_link:
+        app.logger.error("Received empty article link.")
+        raise ValueError("Article link cannot be empty.")
+
+    conn = get_db_connection()
+    try:
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT id FROM articles WHERE link = %s", (article_link,))
+        article_ids = cursor.fetchall()
+
+        if not article_ids:
+            app.logger.warning(f"No articles found for link: {article_link}")
+
+        app.logger.debug(f"Found article IDs: {article_ids}")  # Log article IDs
+
+        return [article_id[0] for article_id in article_ids]
+
+    except Exception as e:
+        app.logger.error(f"Error in get_article_id_from_link: {str(e)}")
+        raise ValueError(f"Error retrieving article ID: {str(e)}")
+
+    finally:
+        if conn:
+            conn.close()
 
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/news')
 def news():
@@ -262,52 +267,43 @@ def delete_comment():
 
 @app.route('/get_comments', methods=['POST'])
 def get_comments():
-
     data = request.get_json(force=True)
     article_link = data.get('article_id')
 
     if not article_link:
         return jsonify({'success': False, 'message': 'Article ID is required.'}), 400
 
-    article_id = get_article_id_from_link(article_link)
-
     try:
+        # Get the article IDs for the given link
+        article_ids = get_article_id_from_link(article_link)
+
+        # If no article IDs are found, return an error
+        if not article_ids:
+            return jsonify({'success': False, 'message': 'No articles found for the given link.'}), 404
+
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute(""" 
-            SELECT comments.id, nkani_users.username, comments.comment_text 
-            FROM comments 
-            JOIN nkani_users ON comments.user_id = nkani_users.id 
-            WHERE comments.article_id = %s
-        """, (article_id,))
+
+        # Modify query to handle multiple article IDs
+        query = """
+            SELECT comments.id, nkani_users.username, comments.comment_text
+            FROM comments
+            JOIN nkani_users ON comments.user_id = nkani_users.id
+            WHERE comments.article_id IN (%s)
+        """ % ','.join(['%s'] * len(article_ids))  # Safely handle multiple article_ids
+
+        cursor.execute(query, tuple(article_ids))
         comments = cursor.fetchall()
         conn.close()
 
+        # Process the comments into a list of dictionaries
         comment_list = [{'id': comment[0], 'username': comment[1], 'commentText': comment[2]} for comment in comments]
 
         return jsonify({'comments': comment_list})
+
     except Exception as e:
+        app.logger.error(f"Error in get_comments: {str(e)}")  # Log the actual error
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
-
-
-def get_article_id_from_link(article_link):
-    try:
-        conn = get_db_connection()  # Establish database connection
-        cursor = conn.cursor()
-
-        # Query the articles table to get the article_id based on the link
-        cursor.execute("SELECT id FROM articles WHERE link = %s", (article_link,))
-        article_id = cursor.fetchone()  # Fetch the result
-
-        conn.close()  # Close the connection
-
-        if article_id:
-            return article_id[0]  # Return the article_id (first column of the result)
-        else:
-            raise ValueError("Article not found for the given link.")
-
-    except Exception as e:
-        raise ValueError(f"Error retrieving article ID: {str(e)}")
 
 
 @app.route('/fetch_news', methods=['POST'])
@@ -365,17 +361,5 @@ def fetch_news():
         app.logger.error(f"Unexpected error: {str(e)}")
         return jsonify({'error': 'An unexpected error occurred, please try again later'}), 500
 
-# def create_default_roles():
-#     conn = get_db_connection()
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT COUNT(*) FROM user_roles WHERE role_name IN ('admin', 'regular_user')")
-#     result = cursor.fetchone()
-#     if result[0] == 0:
-#         cursor.execute("INSERT INTO user_roles (role_name) VALUES ('admin')")
-#         cursor.execute("INSERT INTO user_roles (role_name) VALUES ('regular_user')")
-#         conn.commit()
-#         conn.close()
-#
-# create_default_roles()
 if __name__ == '__main__':
     app.run(debug=True)
