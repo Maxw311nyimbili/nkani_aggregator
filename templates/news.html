@@ -516,7 +516,7 @@ function submitComment(articleId) {
 
 
     const data = {
-        article_id: articleId,  // Include article ID in the request body
+        article_id: encodeURIComponent(articleId),  // Include article ID in the request body
         comment: commentText     // Include comment text
     };
 

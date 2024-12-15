@@ -191,6 +191,8 @@ def logout():
 def comment():
     # Extract data from the JSON body of the request
     data = request.get_json()
+    print(data)
+
     if not data:
         return jsonify({'success': False, 'message': 'No data provided.'}), 400
 
