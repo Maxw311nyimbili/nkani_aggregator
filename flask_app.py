@@ -454,7 +454,7 @@ def delete_user(user_id):
 
 # VIEWING ALL COMMENTS
 @app.route('/admin/comments', methods=['GET'])
-def get_comments():
+def admin_get_comments():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
