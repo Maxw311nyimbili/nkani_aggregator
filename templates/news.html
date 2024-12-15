@@ -666,6 +666,12 @@ function deleteComment(commentId, articleId) {
     `;
 }
 
+    function cancelEdit(commentId, originalText) {
+        // Revert back to the original text
+        const commentTextElement = document.getElementById(`commentText-${commentId}`);
+        commentTextElement.innerText = originalText;
+    }
+
     function saveEditedComment(commentId, articleId) {
     const inputElement = document.getElementById(`editInput-${commentId}`);
     const newText = inputElement.value;
