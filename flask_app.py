@@ -472,7 +472,7 @@ def admin_get_comments():
 
 # DELETING COMMENTS
 @app.route('/admin/comments/<int:comment_id>', methods=['DELETE'])
-def delete_comment(comment_id):
+def admin_delete_comment(comment_id):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
