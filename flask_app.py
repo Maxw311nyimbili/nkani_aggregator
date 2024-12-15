@@ -387,7 +387,7 @@ def get_users():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id, username, email FROM users")
+        cursor.execute("SELECT id, username, email FROM nkani_users")
         users = cursor.fetchall()
         conn.close()
         return jsonify(users)
@@ -409,7 +409,7 @@ def add_user():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO users (username, email, password) VALUES (%s, %s, %s)
+            INSERT INTO nkani_users (username, email, password) VALUES (%s, %s, %s)
         """, (username, email, password))
         conn.commit()
         conn.close()
@@ -459,9 +459,9 @@ def admin_get_comments():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT comments.id, comments.comment_text, users.username, articles.link
+            SELECT comments.id, comments.comment_text, nkani_users.username, articles.link
             FROM comments
-            JOIN users ON comments.user_id = users.id
+            JOIN users ON comments.user_id = nkani_users.id
             JOIN articles ON comments.article_id = articles.id
         """)
         comments = cursor.fetchall()
