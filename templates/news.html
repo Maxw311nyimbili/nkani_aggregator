@@ -540,39 +540,33 @@ function submitComment(articleId) {
 }
 
 
-
 // Fetch Comments for a Specific Article
 function fetchComments(articleLink) {
     const encodedArticleLink = encodeURIComponent(articleLink);  // Ensure the link is URL encoded
     const commentsSection = document.getElementById('comments-section');
     commentsSection.innerHTML = '<p class="text-muted">Loading comments...</p>';
 
-    // Use POST to send the article link in the request body
-    fetch('/get_comments', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',  // Send JSON data
-        },
-        body: JSON.stringify({ article_id: encodedArticleLink })  // Send the encoded link as article_id
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.comments) {
-            displayModalComments(data.comments);
-        } else {
-            commentsSection.innerHTML = '<p class="text-muted">No comments available.</p>';
-        }
-    })
-    .catch(error => {
-        console.error(`Error fetching comments for article ${articleLink}:`, error);
-        commentsSection.innerHTML = '<p class="text-danger">Failed to load comments.</p>';
-    });
+    // Use GET with the article link as a query parameter
+    fetch(`/get_comments?article_id=${encodedArticleLink}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.comments) {
+                displayModalComments(data.comments);
+            } else {
+                commentsSection.innerHTML = '<p class="text-muted">No comments available.</p>';
+            }
+        })
+        .catch(error => {
+            console.error(`Error fetching comments for article ${articleLink}:`, error);
+            commentsSection.innerHTML = '<p class="text-danger">Failed to load comments.</p>';
+        });
 }
+
 
 // Display comments for a specific article
 function displayModalComments(comments) {
