@@ -187,19 +187,24 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/comment/<article_id>', methods=['POST'])
-def comment(article_id):
-    article_id = unquote(article_id)
+@app.route('/comment', methods=['POST'])
+def comment():
+    # Extract data from the JSON body of the request
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'message': 'No data provided.'}), 400
+
+    article_id = data.get('article_id')  # Get article ID from the body
+    comment_text = data.get('comment')   # Get the comment text from the body
+
+    if not article_id or not comment_text:
+        return jsonify({'success': False, 'message': 'Article ID and Comment are required.'}), 400
+
+    # Check if the user is logged in
     if 'user_id' not in session:
         return jsonify({'success': False, 'message': 'You must be logged in to comment.'}), 400
 
     user_id = session['user_id']
-
-    # Use request.json.get() to extract the comment when sending JSON data
-    comment_text = request.json.get('comment')
-
-    if not comment_text:
-        return jsonify({'success': False, 'message': 'Comment cannot be empty.'}), 400
 
     try:
         conn = get_db_connection()
@@ -214,43 +219,59 @@ def comment(article_id):
 
 
 # Delete comment functionality
-@app.route('/delete_comment/<comment_id>', methods=['POST'])
-def delete_comment(comment_id):
+@app.route('/delete_comment', methods=['POST'])
+def delete_comment():
+    # Extract data from the JSON body of the request
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'message': 'No data provided.'}), 400
+
+    comment_id = data.get('comment_id')  # Get comment ID from the body
+
+    if not comment_id:
+        return jsonify({'success': False, 'message': 'Comment ID is required.'}), 400
+
+    # Check if the user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM comments WHERE id = ? AND user_id = ?", (comment_id, session['user_id']))
-    conn.commit()
-    conn.close()
-
-    return jsonify({'success': True, 'message': 'Comment deleted successfully.'}), 200
-
-
-@app.route('/get_comments/<article_id>', methods=['GET'])
-def get_comments(article_id):
-    article_id = unquote(article_id)
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("""
-            SELECT comments.id, nkani_users.username, comments.comment
-            FROM comments
-            JOIN users ON comments.user_id = nkani_users.id
+        cursor.execute("DELETE FROM comments WHERE id = %s AND user_id = %s", (comment_id, session['user_id']))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Comment deleted successfully.'}), 200
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+
+
+@app.route('/get_comments', methods=['GET'])
+def get_comments():
+    article_id = request.args.get('article_id')  # Get article ID from query parameter
+
+    if not article_id:
+        return jsonify({'success': False, 'message': 'Article ID is required.'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(""" 
+            SELECT comments.id, nkani_users.username, comments.comment 
+            FROM comments 
+            JOIN users ON comments.user_id = nkani_users.id 
             WHERE comments.article_id = %s
-            """, (article_id,))
+        """, (article_id,))
         comments = cursor.fetchall()
         conn.close()
 
-        print(comments)
-
-        # Convert the results to a list of dictionaries
         comment_list = [{'id': comment[0], 'username': comment[1], 'commentText': comment[2]} for comment in comments]
 
         return jsonify({'comments': comment_list})
     except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
 
 
 @app.route('/fetch_news', methods=['POST'])

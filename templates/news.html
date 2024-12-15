@@ -513,12 +513,15 @@ function submitComment(articleId) {
         return;
     }
 
-    const encodedArticleId = encodeURIComponent(articleId); // Encode the article ID
+    const data = {
+        article_id: articleId,  // Include article ID in the request body
+        comment: commentText     // Include comment text
+    };
 
-    fetch(`/comment/${encodedArticleId}`, { // Use the encoded article ID in the URL
+    fetch('/comment', {  // Updated route to '/comment' without the article ID in the URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment: commentText })
+        body: JSON.stringify(data)  // Send data in the request body
     })
         .then(response => response.json())
         .then(data => {
@@ -563,6 +566,7 @@ function fetchComments(articleId) {
 
 
 
+
 // Display comments for a specific article
 function displayModalComments(comments) {
     const commentsSection = document.getElementById('comments-section');
@@ -597,7 +601,15 @@ function deleteComment(commentId, articleId) {
         return;
     }
 
-    fetch(`/delete_comment/${commentId}`, { method: 'POST' })
+    const data = {
+        comment_id: commentId  // Include comment ID in the request body
+    };
+
+    fetch('/delete_comment', {  // Updated route to '/delete_comment'
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)  // Send the comment_id in the body
+    })
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -606,13 +618,14 @@ function deleteComment(commentId, articleId) {
         })
         .then(data => {
             if (data.success) {
-                fetchComments(articleId);
+                fetchComments(articleId);  // Reload comments for the article
             } else {
                 alert(`Failed to delete comment: ${data.message}`);
             }
         })
         .catch(error => console.error(`Error deleting comment ${commentId} for article ${articleId}:`, error));
 }
+
 </script>
 
     <!-- Bootstrap JS and Popper.js -->
