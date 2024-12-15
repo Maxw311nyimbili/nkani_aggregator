@@ -538,7 +538,7 @@ function submitComment(articleId) {
         .then(data => {
             if (data.success) {
                 commentInput.value = ''; // Clear input field
-                fetchComments(articleId, loggedInUserId); // Reload comments
+                fetchComments(articleId); // Reload comments
             } else {
                 alert(data.message);
             }
@@ -548,7 +548,7 @@ function submitComment(articleId) {
 
 
 // Fetch Comments for a Specific Article
-function fetchComments(articleLink, loggedInUserId) {
+function fetchComments(articleLink) {
     const encodedArticleLink = encodeURIComponent(articleLink);  // Ensure the link is URL encoded
     const commentsSection = document.getElementById('comments-section');
     commentsSection.innerHTML = '<p class="text-muted">Loading comments...</p>';
@@ -569,7 +569,7 @@ function fetchComments(articleLink, loggedInUserId) {
         })
         .then(data => {
             if (data.comments) {
-                displayModalComments(data.comments, loggedInUserId);
+                displayModalComments(data.comments);
             } else {
                 commentsSection.innerHTML = '<p class="text-muted">No comments available.</p>';
             }
@@ -583,7 +583,7 @@ function fetchComments(articleLink, loggedInUserId) {
 
 
 // Display comments for a specific article
-function displayModalComments(comments, loggedInUserId) {
+function displayModalComments(comments) {
     const commentsSection = document.getElementById('comments-section');
     commentsSection.innerHTML = ''; // Clear existing comments
 
