@@ -260,10 +260,11 @@ def delete_comment():
 
 
 
-@app.route('/get_comments', methods=['GET'])
+@app.route('/get_comments', methods=['POST'])
 def get_comments():
 
-    article_link = request.args.get('article_id')  # Get article ID from query parameter
+    data = request.get_json(force=True)
+    article_link = data.get('article_id')
 
     if not article_link:
         return jsonify({'success': False, 'message': 'Article ID is required.'}), 400
