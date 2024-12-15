@@ -211,7 +211,7 @@ def comment():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO comments (user_id, article_id, comment) VALUES (%s, %s, %s)",
+        cursor.execute("INSERT INTO comments (user_id, article_id, comment_text) VALUES (%s, %s, %s)",
                        (user_id, article_id, comment_text))
         conn.commit()
         conn.close()
