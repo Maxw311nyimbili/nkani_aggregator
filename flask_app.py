@@ -260,7 +260,7 @@ def delete_comment():
 
 
 
-@app.route('/get_comments', methods=['POST'])
+@app.route('/get_comments', methods=['GET'])
 def get_comments():
 
     data = request.get_json()
