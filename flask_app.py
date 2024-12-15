@@ -262,10 +262,14 @@ def delete_comment():
 
 @app.route('/get_comments', methods=['GET'])
 def get_comments():
-    article_id = request.args.get('article_id')  # Get article ID from query parameter
 
-    if not article_id:
+    article_link = request.args.get('article_id')  # Get article ID from query parameter
+    decoded_link = unquote(article_link)
+
+    if not article_link:
         return jsonify({'success': False, 'message': 'Article ID is required.'}), 400
+
+    article_id = get_article_id_from_link(article_link)
 
     try:
         conn = get_db_connection()
@@ -285,6 +289,25 @@ def get_comments():
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
+
+def get_article_id_from_link(article_link):
+    try:
+        conn = get_db_connection()  # Establish database connection
+        cursor = conn.cursor()
+
+        # Query the articles table to get the article_id based on the link
+        cursor.execute("SELECT id FROM articles WHERE link = %s", (article_link,))
+        article_id = cursor.fetchone()  # Fetch the result
+
+        conn.close()  # Close the connection
+
+        if article_id:
+            return article_id[0]  # Return the article_id (first column of the result)
+        else:
+            raise ValueError("Article not found for the given link.")
+
+    except Exception as e:
+        raise ValueError(f"Error retrieving article ID: {str(e)}")
 
 
 @app.route('/fetch_news', methods=['POST'])
