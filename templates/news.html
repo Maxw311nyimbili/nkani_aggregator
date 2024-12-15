@@ -599,13 +599,11 @@ function displayModalComments(comments, loggedInUserId) {
         commentDiv.classList.add('mb-3');
 
         // Check if the logged-in user is the same as the commenter
-        const isOwnComment = comment.user_id == loggedInUserId;
+        const isOwnComment = Number(comment.user_id) === Number(loggedInUserId);
 
-        console.log("session comment.user_id: ");
-        console.log(comment.user_id);
-        console.log("logged in user id: ");
-        console.log(loggedInUserId);
-        console.log(isOwnComment);
+        console.log("Displaying comments for logged-in user ID:", loggedInUserId);
+        console.log("Current comment user ID:", comment.user_id);
+
 
         commentDiv.innerHTML = `
             <div class="border p-2">
