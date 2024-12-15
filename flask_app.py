@@ -431,7 +431,7 @@ def edit_user(user_id):
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            UPDATE users SET username = %s, email = %s WHERE id = %s
+            UPDATE nkani_users SET username = %s, email = %s WHERE id = %s
         """, (username, email, user_id))
         conn.commit()
         conn.close()
@@ -445,7 +445,7 @@ def delete_user(user_id):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        cursor.execute("DELETE FROM nkani_users WHERE id = %s", (user_id,))
         conn.commit()
         conn.close()
         return jsonify({'success': True, 'message': 'User deleted successfully.'})
