@@ -1,3 +1,5 @@
+import urllib
+
 from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -268,7 +270,7 @@ def delete_comment():
 @app.route('/get_comments', methods=['POST'])
 def get_comments():
     data = request.get_json(force=True)
-    article_link = data.get('article_id')
+    article_link = urllib.parse.unquote(data.get('article_id'))
 
     if not article_link:
         return jsonify({'success': False, 'message': 'Article ID is required.'}), 400
