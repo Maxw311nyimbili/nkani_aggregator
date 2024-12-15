@@ -196,10 +196,10 @@ def comment():
     if not data:
         return jsonify({'success': False, 'message': 'No data provided.'}), 400
 
-    article_id = data.get('article_id')  # Get article ID from the body
+    article_link = data.get('article_id')  # Get article ID from the body
     comment_text = data.get('comment')   # Get the comment text from the body
 
-    if not article_id or not comment_text:
+    if not article_link or not comment_text:
         return jsonify({'success': False, 'message': 'Article ID and Comment are required.'}), 400
 
     # Check if the user is logged in
@@ -211,8 +211,19 @@ def comment():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO comments (user_id, article_id, comment_text) VALUES (%s, %s, %s)",
-                       (user_id, article_id, comment_text))
+
+        cursor.execute("""
+                    INSERT INTO articles (title, content, link) 
+                    VALUES ('Default Title', 'Default Content', %s)
+        """, (article_link,))
+
+        article_id = cursor.lastrowid  # Get the last inserted ID, which is the article ID
+
+        cursor.execute("""
+                    INSERT INTO comments (user_id, article_id, comment_text) 
+                    VALUES (%s, %s, %s)
+                """, (user_id, article_id, comment_text))
+
         conn.commit()
         conn.close()
         return jsonify({'success': True, 'message': 'Comment posted successfully.'})
