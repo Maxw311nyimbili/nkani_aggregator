@@ -88,6 +88,7 @@ def get_article_id_from_link(article_link):
             conn.close()
 
 
+#-------BEGINNING OF PAGE ROUTES
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -105,6 +106,26 @@ def news():
     conn.close()
 
     return render_template('news.html',
+                           articles=articles,
+                           comments=comments,
+                           user_id=session.get('user_id'),
+                           logged_in=session.get('logged_in'),
+                           username=session.get('username'))
+
+
+@app.route('/admin')
+def admin():
+    # Fetch news articles and comments
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM articles")
+    articles = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM comments")
+    comments = cursor.fetchall()
+    conn.close()
+
+    return render_template('admin.html',
                            articles=articles,
                            comments=comments,
                            user_id=session.get('user_id'),
@@ -182,6 +203,7 @@ def login():
 
     return render_template('login.html')
 
+#---------END OF PAGE ROUTES
 
 @app.route('/logout')
 def logout():
@@ -355,6 +377,110 @@ def get_comments():
 
     except Exception as e:
         app.logger.error(f"Error in get_comments: {str(e)}")  # Log the actual error
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+
+#-----------ADMIN ROUTE CONTROLS FOR CRUD FUNCTIONALITIES-------------
+# VIEWING ALL USERS
+@app.route('/admin/users', methods=['GET'])
+def get_users():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, username, email FROM users")
+        users = cursor.fetchall()
+        conn.close()
+        return jsonify(users)
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+# ADDING USER INFO
+@app.route('/admin/users', methods=['POST'])
+def add_user():
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')  # Assume the frontend hashes the password
+
+    if not username or not email or not password:
+        return jsonify({'success': False, 'message': 'All fields are required.'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO users (username, email, password) VALUES (%s, %s, %s)
+        """, (username, email, password))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'User added successfully.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+# EDITING USER INFO
+@app.route('/admin/users/<int:user_id>', methods=['PUT'])
+def edit_user(user_id):
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+
+    if not username or not email:
+        return jsonify({'success': False, 'message': 'All fields are required.'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE users SET username = %s, email = %s WHERE id = %s
+        """, (username, email, user_id))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'User updated successfully.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+# DELETING USER INFO
+@app.route('/admin/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'User deleted successfully.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+# VIEWING ALL COMMENTS
+@app.route('/admin/comments', methods=['GET'])
+def get_comments():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT comments.id, comments.comment_text, users.username, articles.link
+            FROM comments
+            JOIN users ON comments.user_id = users.id
+            JOIN articles ON comments.article_id = articles.id
+        """)
+        comments = cursor.fetchall()
+        conn.close()
+        return jsonify(comments)
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+# DELETING COMMENTS
+@app.route('/admin/comments/<int:comment_id>', methods=['DELETE'])
+def delete_comment(comment_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM comments WHERE id = %s", (comment_id,))
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'message': 'Comment deleted successfully.'})
+    except Exception as e:
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
 

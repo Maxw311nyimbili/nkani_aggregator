@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <a class="nav-link active" id="users-tab" href="#" onclick="showUsers()">Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="comments-tab" href="#" onclick="showComments()">Comments</a>
+        </li>
+    </ul>
+
+    <div id="users-section">
+        <h2>Users</h2>
+        <button class="btn btn-primary mb-3" onclick="showAddUserModal()">Add User</button>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="users-table-body"></tbody>
+        </table>
+    </div>
+
+    <div id="comments-section" style="display: none;">
+        <h2>Comments</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Comment</th>
+                    <th>User</th>
+                    <th>Article</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="comments-table-body"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addUser()">Add User</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Fetch users and comments from the server
+    function showUsers() {
+        fetch('/admin/users')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('users-table-body');
+                tableBody.innerHTML = '';
+                data.forEach(user => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function showComments() {
+        fetch('/admin/comments')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('comments-table-body');
+                tableBody.innerHTML = '';
+                data.forEach(comment => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${comment.id}</td>
+                            <td>${comment.comment_text}</td>
+                            <td>${comment.username}</td>
+                            <td>${comment.link}</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteComment(${comment.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function addUser() {
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        fetch('/admin/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, password })
+        }).then(() => showUsers());
+    }
+
+    function deleteUser(userId) {
+        fetch(`/admin/users/${userId}`, { method: 'DELETE' }).then(() => showUsers());
+    }
+
+    function deleteComment(commentId) {
+        fetch(`/admin/comments/${commentId}`, { method: 'DELETE' }).then(() => showComments());
+    }
+</script>
+</body>
+</html>
