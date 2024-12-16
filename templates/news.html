@@ -41,6 +41,9 @@
             overflow-y:auto;
             scroll-behavior: smooth;
         }
+         #new-comment::placeholder {
+            color: white !important;
+        }
 
         /* Style the scrollbar for WebKit browsers */
         #news-cards::-webkit-scrollbar {
@@ -311,21 +314,26 @@
 <!-- Modal -->
 <div class="modal fade" id="sentimentModal" tabindex="-1" aria-labelledby="sentimentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content"
+             style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
+               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+               backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(10px) !important;
+               border: 1px solid rgba(255, 255, 255, 0.3) !important;
+               transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
             <div class="modal-header">
-                <h5 class="modal-title" id="sentimentModalLabel">Sentiment and Sector Impact</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="sentimentModalLabel" style="color:white !important">Sentiment and Sector Impact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="background-color:white !important"></button>
             </div>
             <div class="modal-body">
-                <h6>Sentiment:</h6>
-                <p id="sentiment-text">No Sentiment</p>
-                <h6>Sector Impact:</h6>
+                <h6 style="color:white !important">Sentiment:</h6>
+                <p id="sentiment-text" style="color:white !important">No Sentiment</p>
+                <h6 style="color:white !important">Sector Impact:</h6>
                 <ul id="sector-impact-list">
-                    <li>Energy: Not available</li>
-                    <li>Finance: Not available</li>
-                    <li>Healthcare: Not available</li>
-                    <li>Retail: Not available</li>
-                    <li>Technology: Not available</li>
+                    <li style="color:white !important">Energy: Not available</li>
+                    <li style="color:white !important">Finance: Not available</li>
+                    <li style="color:white !important">Healthcare: Not available</li>
+                    <li style="color:white !important">Retail: Not available</li>
+                    <li style="color:white !important">Technology: Not available</li>
                 </ul>
             </div>
             <div class="modal-footer">
@@ -343,7 +351,7 @@
       <div class="modal-content"
             style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-               backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important;
+               backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(10px) !important;
                border: 1px solid rgba(255, 255, 255, 0.3) !important;
                transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
         <div class="modal-header">
@@ -355,7 +363,8 @@
           <div id="comments-section">
             <!-- Existing comments will be appended here -->
           </div>
-          <textarea id="new-comment" class="form-control my-3" placeholder="Write your comment here..."   style="color:white !important"></textarea>
+          <textarea style="color:white !important" id="new-comment" class="form-control my-3" placeholder="Write your comment here..."></textarea>
+
           <button id="post-comment-btn" class="btn btn-success">Post Comment</button>
         </div>
       </div>
@@ -368,7 +377,7 @@
         <div class="modal-content"
             style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
                    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
-                   backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important;
+                   backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(10px) !important;
                    border: 1px solid rgba(255, 255, 255, 0.3) !important;
                    transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
             <div class="modal-header">
@@ -639,7 +648,7 @@ function fetchComments(articleLink) {
             return response.json();
         })
         .then(data => {
-            if (data.comments) {
+            if (data.comments && Array.isArray(data.comments) && data.comments.length > 0) {
                 displayModalComments(data.comments);
             } else {
                 commentsSection.innerHTML = '<p class="text-muted">No comments available.</p>';
