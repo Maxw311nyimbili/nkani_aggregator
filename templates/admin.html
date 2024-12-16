@@ -14,7 +14,6 @@
             background-size: cover;
             background-attachment: fixed;
             color: white;
-            padding: 50px 0;
             text-align: center;
             width: 100%;
             min-height: 100vh;
@@ -67,10 +66,10 @@
 
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" id="users-tab" href="#" onclick="showUsers()">Users</a>
+            <a class="nav-link active" id="users-tab" href="#" onclick="showUsers()" style="color:white !important">Users</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="comments-tab" href="#" onclick="showComments()">Comments</a>
+            <a class="nav-link" id="comments-tab" href="#" onclick="showComments()" style="color:white !important">Comments</a>
         </li>
     </ul>
 
@@ -80,10 +79,10 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Actions</th>
+                    <th style="color:white !important">ID</th>
+                    <th style="color:white !important">Username</th>
+                    <th style="color:white !important">Email</th>
+                    <th style="color:white !important">Actions</th>
                 </tr>
             </thead>
             <tbody id="users-table-body"></tbody>
@@ -95,10 +94,10 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Comment</th>
-                    <th>User</th>
-                    <th>Actions</th>
+                    <th style="color:white !important">ID</th>
+                    <th style="color:white !important">Comments</th>
+                    <th style="color:white !important">User</th>
+                    <th style="color:white !important">Actions</th>
                 </tr>
             </thead>
             <tbody id="comments-table-body"></tbody>
@@ -196,9 +195,9 @@
                 data.forEach(user => {
                     tableBody.innerHTML += `
                         <tr>
-                            <td>${user.id}</td>
-                            <td>${user.username}</td>
-                            <td>${user.email}</td>
+                            <td style="color:white !important">${user.id}</td>
+                            <td style="color:white !important">${user.username}</td>
+                            <td style="color:white !important">${user.email}</td>
                             <td>
                                 <button class="btn btn-sm btn-danger" onclick="deleteUser(${user.id})">Delete</button>
                                 <button class="btn btn-primary btn-sm" onclick="showEditUserModal(${user.id}, '${user.username}', '${user.email}')">Edit</button>
@@ -232,9 +231,9 @@
                 data.forEach(comment => {
                     tableBody.innerHTML += `
                         <tr>
-                            <td>${comment.id}</td>
-                            <td>${comment.comment_text}</td>
-                            <td>${comment.username}</td>
+                            <td style="color:white !important">${comment.id}</td>
+                            <td style="color:white !important">${comment.comment_text}</td>
+                            <td style="color:white !important">${comment.username}</td>
                             <td>
                                 <button class="btn btn-sm btn-danger" onclick="deleteComment(${comment.id})">Delete</button>
                             </td>
