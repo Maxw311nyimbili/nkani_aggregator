@@ -328,12 +328,12 @@
                 <h6 style="color:white !important">Sentiment:</h6>
                 <p id="sentiment-text" style="color:white !important">No Sentiment</p>
                 <h6 style="color:white !important">Sector Impact:</h6>
-                <ul id="sector-impact-list">
-                    <li style="color:white !important">Energy: Not available</li>
-                    <li style="color:white !important">Finance: Not available</li>
-                    <li style="color:white !important">Healthcare: Not available</li>
-                    <li style="color:white !important">Retail: Not available</li>
-                    <li style="color:white !important">Technology: Not available</li>
+                <ul id="sector-impact-list" style="color:white !important">
+                    <li style="color:inherit !important">Energy: Not available</li>
+                    <li style="color:inherit !important">Finance: Not available</li>
+                    <li style="color:inherit !important">Healthcare: Not available</li>
+                    <li style="color:inherit !important">Retail: Not available</li>
+                    <li style="color:inherit !important">Technology: Not available</li>
                 </ul>
             </div>
             <div class="modal-footer">
@@ -356,7 +356,7 @@
                transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
         <div class="modal-header">
           <h5 class="modal-title" id="commentsModalLabel"  style="color:white !important">Comments</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" style="color: white !important;" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" style="background-color:white !important" aria-label="Close"></button>
 
         </div>
         <div class="modal-body">
@@ -382,7 +382,7 @@
                    transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
             <div class="modal-header">
                 <h5 class="modal-title" id="profileModalLabel" style="color: white !important;">User Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:white !important" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="background-color:white !important" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Profile Details -->
@@ -656,7 +656,7 @@ function fetchComments(articleLink) {
         })
         .catch(error => {
             console.error(`Error fetching comments for article ${articleLink}:`, error);
-            commentsSection.innerHTML = '<p class="text-danger">Failed to load comments.</p>';
+            commentsSection.innerHTML = '<p class="text-muted">No comments yet. Be the first to comment!</p>';
         });
 }
 
@@ -737,24 +737,24 @@ function deleteComment(commentId, articleId) {
 
 //EDITING A COMMENT FUNCTIONS
     function editComment(commentId, articleId) {
-    // Locate the current comment text span
-    const commentTextElement = document.getElementById(`commentText-${commentId}`);
-    const currentText = commentTextElement.innerText;
-
-    // Replace the text with an input field and Save/Cancel buttons
-    commentTextElement.innerHTML = `
-        <input type="text" id="editInput-${commentId}" class="form-control form-control-sm" value="${currentText}" />
-        <button class="btn btn-sm btn-success mt-1" onclick="saveEditedComment('${commentId}', '${articleId}')">Save</button>
-        <button class="btn btn-sm btn-secondary mt-1" onclick="cancelEdit('${commentId}', '${currentText}')">Cancel</button>
-    `;
-}
-
-    function cancelEdit(commentId, originalText) {
-        // Revert back to the original text
+        // Locate the current comment text span
         const commentTextElement = document.getElementById(`commentText-${commentId}`);
-        commentTextElement.innerText = originalText;
+        const currentText = commentTextElement.innerText;
+
+        // Replace the text with an input field and Save/Cancel buttons
+        commentTextElement.innerHTML = `
+            <input type="text" id="editInput-${commentId}" class="form-control form-control-sm" value="${currentText}" />
+            <button class="btn btn-sm btn-success mt-1" onclick="saveEditedComment('${commentId}', '${articleId}')">Save</button>
+            <button class="btn btn-sm btn-secondary mt-1" onclick="cancelEdit('${commentId}', '${currentText}')">Cancel</button>
+        `;
     }
 
+    // Cancel editing the comment and revert to the original text
+    function cancelEdit(commentId, originalText) {
+        // Locate the comment text element and revert its content to the original text
+        const commentTextElement = document.getElementById(`commentText-${commentId}`);
+        commentTextElement.innerHTML = `<span id="commentText-${commentId}">${originalText}</span>`;
+    }
     function saveEditedComment(commentId, articleId) {
     const inputElement = document.getElementById(`editInput-${commentId}`);
     const newText = inputElement.value;
