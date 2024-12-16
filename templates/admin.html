@@ -29,6 +29,25 @@
             width: 100px;
             margin-left: 15vw;
         }
+
+        .nav-tabs .nav-item {
+             background: #282654; /* Default background color */
+        }
+
+        .nav-tabs .nav-link {
+            color: white; /* Default text color */
+        }
+
+        .nav-tabs .nav-link.active {
+            background: #44417a; /* Custom background for the active tab */
+            color: white !important; /* Ensure the text stays white */
+            border: none; /* Optional: remove borders if undesired */
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: #3b386a; /* Slightly lighter color on hover */
+            color: white !important;
+        }
 </style>
 <body>
     <!-- Navbar -->
@@ -65,10 +84,10 @@
     <h1 class="mb-4">Admin Dashboard</h1>
 
     <ul class="nav nav-tabs mb-3" >
-        <li class="nav-item" style="background: #282654 !important; color:white !important;">
+        <li class="nav-item" >
             <a class="nav-link active" id="users-tab" href="#" onclick="showUsers()" style="color:white !important">Users</a>
         </li>
-        <li class="nav-item" style="background: #282654 !important; color:white !important;">
+        <li class="nav-item" >
             <a class="nav-link" id="comments-tab" href="#" onclick="showComments()" style="color:white !important">Comments</a>
         </li>
     </ul>
