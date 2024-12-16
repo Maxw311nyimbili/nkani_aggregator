@@ -347,14 +347,15 @@
                border: 1px solid rgba(255, 255, 255, 0.3) !important;
                transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
         <div class="modal-header">
-          <h5 class="modal-title" id="commentsModalLabel">Comments</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:white !important" aria-label="Close"></button>
+          <h5 class="modal-title" id="commentsModalLabel"  style="color:white !important">Comments</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" style="color: white !important; border: none; background: transparent;" aria-label="Close"></button>
+
         </div>
         <div class="modal-body">
           <div id="comments-section">
             <!-- Existing comments will be appended here -->
           </div>
-          <textarea id="new-comment" class="form-control my-3" placeholder="Write your comment here..."></textarea>
+          <textarea id="new-comment" class="form-control my-3" placeholder="Write your comment here..."   style="color:white !important"></textarea>
           <button id="post-comment-btn" class="btn btn-success">Post Comment</button>
         </div>
       </div>
@@ -574,7 +575,7 @@ function displayModalComments(comments) {
         commentDiv.classList.add('mb-3');
         commentDiv.innerHTML = `
             <div class="border p-2">
-                <p style="color:white !important"><strong>${comment.user}:</strong> ${comment.text}</p>
+                <p style="color:white !important"><strong style="color: inherit;">${comment.user}:</strong> ${comment.text}</p>
                 <small class="text-muted">${new Date(comment.timestamp).toLocaleString()}</small>
             </div>
         `;
@@ -676,7 +677,11 @@ function displayModalComments(comments) {
 
        commentDiv.innerHTML = `
     <div class="border p-2">
-        <p><strong>${comment.username}:</strong> <span id="commentText-${comment.id}">${comment.commentText}</span></p>
+        <p style="color:white !important;">
+            <strong style="color: inherit;"><span id="commentText-${comment.id}">${comment.username}:</span></strong>
+            <span id="commentText-${comment.id}" style="color: inherit;">${comment.commentText}</span>
+        </p>
+
         <small class="text-muted">
             ${isOwnComment ? `
                 <button class="btn btn-sm btn-primary" onclick="editComment('${comment.id}', '${comment.articleId}')">
