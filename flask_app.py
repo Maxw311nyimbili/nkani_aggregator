@@ -483,6 +483,46 @@ def admin_delete_comment(comment_id):
     except Exception as e:
         return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
 
+# profile ROUTES
+@app.route('/profile/<int:user_id>', methods=['GET'])
+def get_profile(user_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT username, email, name, age, bio FROM nkani_users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        conn.close()
+
+        if user:
+            return jsonify({'success': True, 'user': user})
+        else:
+            return jsonify({'success': False, 'message': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
+
+@app.route('/profile/<int:user_id>', methods=['PUT'])
+def update_profile(user_id):
+    data = request.get_json()
+
+    if not data.get('username') or not data.get('email'):
+        return jsonify({'success': False, 'message': 'Username and email are required.'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            UPDATE nkani_users 
+            SET username = %s, email = %s, name = %s, age = %s, bio = %s 
+            WHERE id = %s
+        """, (data['username'], data['email'], data.get('name'), data.get('age'), data.get('bio'), user_id))
+        conn.commit()
+        conn.close()
+
+        return jsonify({'success': True, 'message': 'Profile updated successfully.'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+
 
 @app.route('/fetch_news', methods=['POST'])
 def fetch_news():

@@ -219,9 +219,10 @@
                                 <a class="nav-link" href="{{ url_for('news') }}">news</a>
                         </li>
 
-                          <li class="nav-item">
-                                <a class="nav-link" href="#">Profile</a>
+                         <li class="nav-item">
+                                <a class="nav-link" href="#" onclick="showProfile({{ session.get('user_id') }})">Profile</a>
                          </li>
+
 
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
@@ -340,7 +341,63 @@
     </div>
   </div>
 
-  
+  <!-- Profile Modal -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"
+            style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
+                   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+                   backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important;
+                   border: 1px solid rgba(255, 255, 255, 0.3) !important;
+                   transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">User Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Profile Details -->
+                <div id="profileDetails">
+                    <p><strong>Username:</strong> <span id="profileUsername"></span></p>
+                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p><strong>Name:</strong> <span id="profileName"></span></p>
+                    <p><strong>Age:</strong> <span id="profileAge"></span></p>
+                    <p><strong>Bio:</strong> <span id="profileBio"></span></p>
+                    <button class="btn btn-primary mt-3" onclick="enableEdit()">Edit</button>
+                </div>
+
+                <!-- Edit Profile Form -->
+                <form id="profileEditFields" style="display: none;" onsubmit="saveProfile(event)">
+                    <div class="mb-3">
+                        <label for="editUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="editUsername" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editName" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAge" class="form-label">Age</label>
+                        <input type="number" class="form-control" id="editAge">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBio" class="form-label">Bio</label>
+                        <textarea class="form-control" id="editBio"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trigger Button -->
+<button class="btn btn-primary" onclick="showProfile(4)">View Profile</button>
+
 <script>
 
     // Access session variable passed from Flask
@@ -698,6 +755,84 @@ function deleteComment(commentId, articleId) {
     .catch(error => console.error('Error:', error));
 }
 
+//PROFILE JS
+    // Show the profile modal and fetch user data
+function showProfile(userId) {
+    fetch(`/profile/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('profileUsername').textContent = data.user.username;
+                document.getElementById('profileEmail').textContent = data.user.email;
+                document.getElementById('profileName').textContent = data.user.name || 'N/A';
+                document.getElementById('profileAge').textContent = data.user.age || 'N/A';
+                document.getElementById('profileBio').textContent = data.user.bio || 'N/A';
+
+                const profileModal = new bootstrap.Modal(document.getElementById('profileModal'));
+                profileModal.show();
+            } else {
+                alert('Failed to load profile: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching profile:', error);
+            alert('An error occurred while fetching the profile.');
+        });
+}
+
+// Enable edit mode
+function enableEdit() {
+    document.getElementById('profileDetails').style.display = 'none';
+    document.getElementById('profileEditFields').style.display = 'block';
+
+    document.getElementById('editUsername').value = document.getElementById('profileUsername').textContent;
+    document.getElementById('editEmail').value = document.getElementById('profileEmail').textContent;
+    document.getElementById('editName').value = document.getElementById('profileName').textContent;
+    document.getElementById('editAge').value = document.getElementById('profileAge').textContent;
+    document.getElementById('editBio').value = document.getElementById('profileBio').textContent;
+}
+
+// Save the edited profile
+function saveProfile(event) {
+    event.preventDefault();
+
+    const userId = 4; // Replace with dynamic ID if needed
+    const updatedData = {
+        username: document.getElementById('editUsername').value,
+        email: document.getElementById('editEmail').value,
+        name: document.getElementById('editName').value,
+        age: document.getElementById('editAge').value,
+        bio: document.getElementById('editBio').value
+    };
+
+    fetch(`/profile/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Profile updated successfully!');
+                document.getElementById('profileDetails').style.display = 'block';
+                document.getElementById('profileEditFields').style.display = 'none';
+
+                showProfile(userId); // Refresh profile details
+            } else {
+                alert('Error updating profile: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error saving profile:', error);
+            alert('An error occurred while updating the profile.');
+        });
+}
+
+// Cancel edit mode
+function cancelEdit() {
+    document.getElementById('profileDetails').style.display = 'block';
+    document.getElementById('profileEditFields').style.display = 'none';
+}
 
 
 </script>
