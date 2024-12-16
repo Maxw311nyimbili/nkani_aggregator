@@ -746,16 +746,13 @@ function deleteComment(commentId, articleId) {
         // Replace the comment text with an input field and Save/Cancel buttons
         commentTextElement.innerHTML = `
             <input type="text" id="editInput-${commentId}" class="form-control form-control-sm" value="${currentText}" />
-            <button class="btn btn-sm btn-success mt-1" onclick="saveEditedComment('${commentId}', '${articleId}')">Save</button>
-            <button class="btn btn-sm btn-secondary mt-1" onclick="cancelEditFunction('${commentId}', '${currentText}')">Cancel</button>
+            <button class="btn btn-sm btn-success mt-1" onclick="saveEditedComment('${commentId}', '${articleId}')">Done</button>
         `;
     }
 
     // Cancel editing the comment and revert to the original text
     function cancelEditFunction(commentId, originalText) {
-
         const commentTextElement = document.getElementById(`commentText-${commentId}`);
-
         commentTextElement.innerHTML = originalText;
     }
 
