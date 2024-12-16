@@ -236,7 +236,7 @@
 <!--                        </li>-->
 
                         <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('news') }}">news</a>
+                                <a class="nav-link" href="{{ url_for('news') }}">News</a>
                         </li>
 
                          <li class="nav-item" onclick="showProfile({{ session.get('user_id') }})">
@@ -295,7 +295,7 @@
 
             <!-- Fetch News Button -->
             <div class="col-md-4 mb-4 text-center">
-                <button class="btn btn-custom btn-lg" onclick="fetchNews()">Fetch News</button>
+                <button class="btn btn-custom btn-lg" style="border: 1px solid white;" onclick="fetchNews()">Fetch News</button>
             </div>
         </div>
 

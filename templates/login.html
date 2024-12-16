@@ -67,6 +67,21 @@
             border-color: red; 
             box-shadow: 0 0 5px rgba(255, 0, 0, 0.5); 
         }
+         .form-control {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid white !important;
+            color: white !important;
+            border-radius: 0 !important;
+            outline: none;
+            box-shadow: none !important;
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: none !important;
+            border-bottom: 2px solid #ccc !important;
+        }
     </style>
 </head>
 <body>
@@ -102,18 +117,22 @@
 
 
 
-    <div class="container my-5">
+    <div class="container my-5" style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
+               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+               backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(10px) !important;
+               border: 1px solid rgba(255, 255, 255, 0.3) !important;
+               transition: transform 0.3s ease-in-out !important; padding: 15px !important;">
         <div class="card p-4">
             <div class="card-header">
                 <h1>Login</h1>
             </div>
             <form method="POST" action="/login" data-parsley-validate>
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
+                    <label for="username" class="form-label" style="color:white !important;">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required autofocus autocomplete="off">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label" style="color:white !important;">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required data-parsley-minlength="8"
                     data-parsley-required-message="Password is required"
                     data-parsley-minlength-message="Password must be at least 8 characters long" autocomplete="off">
@@ -126,12 +145,12 @@
 
                 <button type="submit" class="btn btn-custom w-100">Login</button>
             </form>
-            <p class="text-center mt-3">Don't have an account? <a href="{{url_for('signup') }}">Sign Up</a></p>
+            <p class="text-center mt-3" style="color:white !important;">Don't have an account? <a href="{{url_for('signup') }}">Sign Up</a></p>
         </div>
     </div>
 
     <script>
-        // Optional: Show error message if login fails
+=
         const errorMessage = document.getElementById('error-message');
         if (window.location.search.includes('error=true')) {
             errorMessage.style.display = 'block';
