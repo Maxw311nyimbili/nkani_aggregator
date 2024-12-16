@@ -846,6 +846,7 @@ function saveProfile(event) {
                 document.getElementById('profileEditFields').style.display = 'none';
 
                 showProfile(userId); // Refresh profile details
+                location.reload();
             } else {
                 alert('Error updating profile: ' + data.message);
             }
