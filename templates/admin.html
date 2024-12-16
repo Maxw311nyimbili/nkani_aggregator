@@ -113,6 +113,12 @@
             });
     }
 
+
+    function showAddUserModal() {
+        const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
+        addUserModal.show();
+    }
+
     function showComments() {
           // Show the Comments section and hide the Users section
         document.getElementById('comments-section').style.display = 'block';
