@@ -49,6 +49,21 @@
             background: #3b386a; /* Slightly lighter color on hover */
             color: white !important;
         }
+      .form-control {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid white !important;
+            color: white !important;
+            border-radius: 0 !important;
+            outline: none;
+            box-shadow: none !important;
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: none !important;
+            border-bottom: 2px solid #ccc !important;
+        }
 </style>
 <body>
     <!-- Navbar -->
@@ -128,7 +143,12 @@
 <!-- Modals -->
 <div class="modal" id="addUserModal" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
+               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+               backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(10px) !important;
+               border: 1px solid rgba(255, 255, 255, 0.3) !important;
+               transition: transform 0.3s ease-in-out !important; padding: 15px !important;">
+            <div class="card-header">
             <div class="modal-header">
                 <h5 class="modal-title">Add User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -157,7 +177,11 @@
 <!-- Edit User Modal -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <div class="modal-content">
+    <div class="modal-content" style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
+               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+               backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(10px) !important;
+               border: 1px solid rgba(255, 255, 255, 0.3) !important;
+               transition: transform 0.3s ease-in-out !important; padding: 15px !important;">
       <div class="modal-header">
         <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -181,6 +205,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 
 
