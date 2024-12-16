@@ -85,6 +85,15 @@
 <script>
     // Fetch users and comments from the server
     function showUsers() {
+        // Show the Users section and hide the Comments section
+        document.getElementById('users-section').style.display = 'block';
+        document.getElementById('comments-section').style.display = 'none';
+
+        // Update the active state of the nav links
+        document.getElementById('users-tab').classList.add('active');
+        document.getElementById('comments-tab').classList.remove('active');
+
+
         fetch('/admin/users')
             .then(response => response.json())
             .then(data => {
@@ -106,6 +115,14 @@
     }
 
     function showComments() {
+          // Show the Comments section and hide the Users section
+        document.getElementById('comments-section').style.display = 'block';
+        document.getElementById('users-section').style.display = 'none';
+
+        // Update the active state of the nav links
+        document.getElementById('comments-tab').classList.add('active');
+        document.getElementById('users-tab').classList.remove('active');
+
         fetch('/admin/comments')
             .then(response => response.json())
             .then(data => {
