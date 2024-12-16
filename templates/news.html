@@ -196,6 +196,21 @@
                 transform: rotate(2turn);
             }
         }
+        .form-control {
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid white !important;
+            color: white !important;
+            border-radius: 0 !important;
+            outline: none;
+            box-shadow: none !important;
+        }
+
+        .form-control:focus {
+            outline: none;
+            box-shadow: none !important;
+            border-bottom: 2px solid #ccc !important;
+        }
 
    
     </style>
@@ -325,10 +340,15 @@
 <!-- Comments Modal -->
 <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+      <div class="modal-content"
+            style="background: rgba(255, 255, 255, 0.2) !important; border-radius: 16px !important;
+               box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+               backdrop-filter: blur(5px)!important; -webkit-backdrop-filter: blur(5px) !important;
+               border: 1px solid rgba(255, 255, 255, 0.3) !important;
+               transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
         <div class="modal-header">
           <h5 class="modal-title" id="commentsModalLabel">Comments</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:white !important" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div id="comments-section">
@@ -352,16 +372,16 @@
                    transition: transform 0.3s ease-in-out !important; padding: 25px !important;">
             <div class="modal-header">
                 <h5 class="modal-title" id="profileModalLabel">User Profile</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="color:white !important" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Profile Details -->
                 <div id="profileDetails">
-                    <p><strong>Username:</strong> <span id="profileUsername"></span></p>
-                    <p><strong>Email:</strong> <span id="profileEmail"></span></p>
-                    <p><strong>Name:</strong> <span id="profileName"></span></p>
-                    <p><strong>Age:</strong> <span id="profileAge"></span></p>
-                    <p><strong>Bio:</strong> <span id="profileBio"></span></p>
+                    <p style="color:white !important"><strong>Username:</strong> <span id="profileUsername"></span></p>
+                    <p style="color:white !important"><strong>Email:</strong> <span id="profileEmail"></span></p>
+                    <p style="color:white !important"><strong>Name:</strong> <span id="profileName"></span></p>
+                    <p style="color:white !important"><strong>Age:</strong> <span id="profileAge"></span></p>
+                    <p style="color:white !important"><strong>Bio:</strong> <span id="profileBio"></span></p>
                     <button class="btn btn-primary mt-3" onclick="enableEdit()">Edit</button>
                 </div>
 
@@ -554,7 +574,7 @@ function displayModalComments(comments) {
         commentDiv.classList.add('mb-3');
         commentDiv.innerHTML = `
             <div class="border p-2">
-                <p><strong>${comment.user}:</strong> ${comment.text}</p>
+                <p style="color:white !important"><strong>${comment.user}:</strong> ${comment.text}</p>
                 <small class="text-muted">${new Date(comment.timestamp).toLocaleString()}</small>
             </div>
         `;
