@@ -9,12 +9,11 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 
-# Initialize sentiment analysis
+
 analyzer = SentimentIntensityAnalyzer()
 
-# Google Custom Search API key and Search Engine ID
 API_KEY = "AIzaSyDNmDWsei3Fkr1eJF16ARKFWHxlLXyAkzQ"
-SEARCH_ENGINE_ID = "f50acf0b91bf54f03"  # Replace with your actual Search Engine ID
+SEARCH_ENGINE_ID = "f50acf0b91bf54f03"
 
 
 def scrape_news(country, categories):
